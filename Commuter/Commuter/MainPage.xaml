@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Commuter.MainPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Commuter.Controls"
+    xmlns:converters="clr-namespace:Commuter.Converters"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ContentPage.Resources>
+        <converters:HumanizeTimeConverter x:Key="HumanizeTimeConverter" />
+    </ContentPage.Resources>
+
+    <ListView
+        x:Name="ResultsList"
+        HasUnevenRows="true"
+        IsGroupingEnabled="true"
+        IsPullToRefreshEnabled="true"
+        IsRefreshing="{Binding IsRefreshing}"
+        ItemsSource="{Binding DepartureBoard}"
+        RefreshCommand="{Binding RefreshCommand}"
+        SeparatorVisibility="None"
+        SelectionMode="None">
+        <ListView.GroupHeaderTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <Grid Margin="15,12,15,5">
+                        <StackLayout Orientation="Horizontal">
+                            <Label FontSize="Header" FontAttributes="Bold" Text="{Binding Name}" />
+                        </StackLayout>
+                        <StackLayout
+                            Margin="0,0,0,0"
+                            HorizontalOptions="End"
+                            Orientation="Horizontal">
+                            <Label HorizontalOptions="End" Text="{Binding Distance}" />
+                            <Label Text="meters" />
+                        </StackLayout>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.GroupHeaderTemplate>
+
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <StackLayout>
+                        <StackLayout
+                            Padding="15,10,0,10"
+                            BackgroundColor="#D7D7D7"
+                            Orientation="Horizontal">
+                            <Label FontAttributes="Bold" Text="Position" />
+                            <Label FontAttributes="Bold" Text="{Binding Name}" />
+                        </StackLayout>
+                        <controls:RepeaterView Margin="15,10,0,10" ItemsSource="{Binding}">
+                            <controls:RepeaterView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Grid Margin="0,5,15,5">
+                                            <StackLayout Orientation="Horizontal">
+                                                <Label Text="{Binding Name}" />
+                                                <Label Text="{Binding Towards}" />
+                                            </StackLayout>
+                                            <StackLayout HorizontalOptions="End" Orientation="Horizontal">
+                                                <Label HorizontalOptions="End" Text="{Binding Time, Converter={StaticResource HumanizeTimeConverter}}" />
+                                            </StackLayout>
+                                        </Grid>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </controls:RepeaterView.ItemTemplate>
+                        </controls:RepeaterView>
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+
+</ContentPage>
