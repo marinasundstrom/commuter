@@ -22,21 +22,26 @@
         IsRefreshing="{Binding IsRefreshing}"
         ItemsSource="{Binding DepartureBoard}"
         RefreshCommand="{Binding RefreshCommand}"
-        SeparatorVisibility="None"
-        SelectionMode="None">
+        SelectionMode="None"
+        SeparatorVisibility="None">
         <ListView.GroupHeaderTemplate>
             <DataTemplate>
                 <ViewCell>
                     <StackLayout BackgroundColor="#D7D7D7">
                         <Grid Margin="15,12,15,5">
                             <StackLayout Orientation="Horizontal">
-                                <Label FontSize="Header" FontAttributes="Bold" Text="{Binding Name}" />
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="{OnPlatform Header,
+                                                          Android=20}"
+                                    Text="{Binding Name}" />
                             </StackLayout>
                             <StackLayout
                                 Margin="0,0,0,0"
                                 HorizontalOptions="End"
                                 Orientation="Horizontal">
-                                <Label HorizontalOptions="End" Text="{Binding Distance, Converter={StaticResource HumanizeDistanceConverter}}" />
+                                <Label HorizontalOptions="End" FontSize="{OnPlatform Default,
+                                                          Android=20}" Text="{Binding Distance, Converter={StaticResource HumanizeDistanceConverter}}" />
                             </StackLayout>
                         </Grid>
                     </StackLayout>
@@ -62,7 +67,10 @@
                                         <Grid Margin="0,5,15,5">
                                             <StackLayout Orientation="Horizontal">
                                                 <Label Text="{Binding Name}" />
-                                                <Label Text="{Binding Towards}" LineBreakMode="TailTruncation" WidthRequest="250"/>
+                                                <Label
+                                                    LineBreakMode="TailTruncation"
+                                                    Text="{Binding Towards}"
+                                                    WidthRequest="250" />
                                             </StackLayout>
                                             <StackLayout HorizontalOptions="End" Orientation="Horizontal">
                                                 <Label HorizontalOptions="End" Text="{Binding Time, Converter={StaticResource HumanizeTimeConverter}}" />
