@@ -19,18 +19,16 @@ namespace Commuter.Models
 {
     public class DepartureBoardViewModel : ObservableCollection<StopArea>, IDepartureBoard
     {
-        private readonly StopAreaFetcher stopAreaFetcher;
-        private readonly DepartureFetcher departureFetcher;
+        private readonly DataFetcher dataFetcher;
         private readonly ILogger<DepartureBoardViewModel> logger;
         private readonly CancellationTokenSource? cancellationTokenSource;
         private readonly DateTime lastFetch;
         private bool isLoadingData;
         private const int DepartureDisplayLimit = 4;
 
-        public DepartureBoardViewModel(StopAreaFetcher stopAreaFetcher, DepartureFetcher departureFetcher, ILogger<DepartureBoardViewModel> logger)
+        public DepartureBoardViewModel(DataFetcher dataFetcher, ILogger<DepartureBoardViewModel> logger)
         {
-            this.stopAreaFetcher = stopAreaFetcher;
-            this.departureFetcher = departureFetcher;
+            this.dataFetcher = dataFetcher;
             this.logger = logger;
         }
 
@@ -38,49 +36,61 @@ namespace Commuter.Models
 
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
         {
-            logger.LogInformation("Loading Departure Board");
-
-            if (IsLoadingData)
+            try
             {
-                logger.LogInformation("Load is already in progress");
-                return;
-            }
+                logger.LogDebug("Loading Departure Board");
 
-            IsLoadingData = true;
-
-            var fetchedStopAreas = await GetStopAreasAsync();
-
-            if (!fetchedStopAreas.Any())
-            {
-                logger.LogInformation("No StopAreas found.");
-                IsLoadingData = false;
-                return;
-            }
-
-            logger.LogInformation("Fetched StopAreas");
-
-            await Device.InvokeOnMainThreadAsync(async () =>
-            {
-                UpdateStopAreas(fetchedStopAreas);
-
-                logger.LogInformation("StopAreas updated");
-
-                foreach (var stopArea in this)
+                if (IsLoadingData)
                 {
-                    var fetchedStopPoints = await departureFetcher.GetDeparturesByStopPointAsync(stopArea.StopAreaId, GetDesiredDepartureTime());
-
-                    logger.LogInformation($"Fetched StopPoints and Departures for StopArea {stopArea.Name}");
-
-                    await Device.InvokeOnMainThreadAsync(() =>
-                    {
-                        UpdateStopPoints(stopArea, fetchedStopPoints);
-
-                        logger.LogInformation($"Updated StopPoints for StopArea {stopArea.Name}");
-                    });
+                    logger.LogDebug("Load is already in progress");
+                    return;
                 }
-            });
 
-            IsLoadingData = false;
+                IsLoadingData = true;
+
+                var fetchedStopAreas = await dataFetcher.FetchData(cancellationToken);
+
+                if (!fetchedStopAreas.Any())
+                {
+                    logger.LogDebug("No data found.");
+                    IsLoadingData = false;
+                    return;
+                }
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    logger.LogDebug("Update was cancelled");
+                    return;
+                }
+
+                await Device.InvokeOnMainThreadAsync(() =>
+                {
+                    UpdateStopAreas(fetchedStopAreas);
+
+                    logger.LogDebug("StopAreas updated");
+
+                    foreach (var stopArea in this)
+                    {
+                        logger.LogDebug($"Fetched StopPoints and Departures for StopArea {stopArea.Name}");
+
+                        var sa = fetchedStopAreas.First(sa => sa.StopAreaId == stopArea.StopAreaId);
+
+                        UpdateStopPoints(stopArea, sa.StopPoints);
+
+                        logger.LogDebug($"Updated StopPoints for StopArea {stopArea.Name}");
+                    }
+                });
+
+                IsLoadingData = false;
+            }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
+                IsLoadingData = false;
+            }
         }
 
         public async Task ClearAsync()
@@ -93,26 +103,7 @@ namespace Commuter.Models
             {
                 Clear();
             });
-            logger.LogInformation($"Cleared Departure Board");
-        }
-
-        private static async Task<Location> GetCoordinates()
-        {
-            if (Utils.IsRunningInSimulator)
-            {
-                return await Task.FromResult(new Location(55.6906897, 13.1899686));
-            }
-            else
-            {
-                return await Xamarin.Essentials.Geolocation.GetLocationAsync();
-            }
-        }
-
-        private async Task<IEnumerable<Data.StopArea>> GetStopAreasAsync()
-        {
-            var location = await GetCoordinates();
-            var radius = 400;
-            return await stopAreaFetcher.GetNearestStopAreasAsync(location.Latitude, location.Longitude, radius);
+            logger.LogDebug($"Cleared Departure Board");
         }
 
         private void UpdateStopPoints(StopArea stopArea, IEnumerable<Data.StopPoint> fetchedStopPoints)
@@ -151,14 +142,11 @@ namespace Commuter.Models
                         logger.LogDebug($"Added Departure {departure.Name} {departure.Towards} with {departure.RunNo} to StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
                     }
 
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        departure.LineType = fetchedDeparture.LineType;
-                        departure.Line = fetchedDeparture.Line;
-                        departure.Name = fetchedDeparture.Name;
-                        departure.Towards = fetchedDeparture.Towards;
-                        departure.Time = fetchedDeparture.DepartureTime;
-                    });
+                    departure.LineType = fetchedDeparture.LineType;
+                    departure.Line = fetchedDeparture.Line;
+                    departure.Name = fetchedDeparture.Name;
+                    departure.Towards = fetchedDeparture.Towards;
+                    departure.Time = fetchedDeparture.DepartureTime;
 
                     logger.LogDebug($"Updated Departure {departure.Name} {departure.Towards} with {departure.RunNo} to StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
                 }
@@ -169,12 +157,7 @@ namespace Commuter.Models
             }
         }
 
-        private static DateTime GetDesiredDepartureTime()
-        {
-            return DateTime.Now.Truncate(TimeSpan.FromSeconds(1));
-        }
-
-        private void UpdateStopAreas(IEnumerable<Data.StopArea> fetchedStopAreas)
+        private void UpdateStopAreas(IEnumerable<(int StopAreaId, string Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)> fetchedStopAreas)
         {
 
             // INFO: Delete StopAreas that have not been recently fetched

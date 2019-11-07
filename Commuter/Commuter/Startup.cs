@@ -64,7 +64,8 @@ namespace Commuter
 
             services
                 .AddTransient<StopAreaFetcher>()
-                .AddTransient<DepartureFetcher>();
+                .AddTransient<DepartureFetcher>()
+                .AddTransient<DataFetcher>();
 
             services
               .AddSingleton<MainViewModel>()
