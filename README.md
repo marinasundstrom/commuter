@@ -1,5 +1,9 @@
 # Project “Commuter”
 
+Mobile app for daily commuters in Skåne region, Sweden. 
+
+For iOS and Android.
+
 ## User Story
 
 As a daily Commuter, I want to be able to see the upcoming Departures at the closest Stop Areas so that I know when to leave for/from work.
@@ -17,17 +21,25 @@ This has been implemented:
 * Preset radius of 400 meters
 * Refreshes automatically every 10 seconds
 * Pull-to-refresh
-* Uses Skånetrafikens [Open API](http://www.labs.skanetrafiken.se/default.asp)
+* Uses Skånetrafiken's [Open API](http://www.labs.skanetrafiken.se/default.asp)
 * Available for iOS och Android
 * Built on .NET with Xamarin.Forms
 
 ## Screenshots
 
+Android:
+
 <img src="Screenshots/android.jpeg" alt="On Android" width="300">
+
+iOS:
+
 <img src="Screenshots/ios.png" alt="On iOS" width="300">
 
 ## Futures
+* Stabilization
 * Set custom radius
+* Localization
+* Watchlist and Alarm
 * Widgets for iOS and Android
 * Integration with Skånetrafiken app: linking
 
