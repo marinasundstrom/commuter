@@ -68,9 +68,9 @@
                                             <StackLayout Orientation="Horizontal">
                                                 <Label Text="{Binding Name}" />
                                                 <Label
-                                                    LineBreakMode="TailTruncation"
+                                                    LineBreakMode="WordWrap"
                                                     Text="{Binding Towards}"
-                                                    WidthRequest="250" />
+                                                    WidthRequest="180" />
                                             </StackLayout>
                                             <StackLayout HorizontalOptions="End" Orientation="Horizontal">
                                                 <Label HorizontalOptions="End" Text="{Binding Time, Converter={StaticResource HumanizeTimeConverter}}" />
