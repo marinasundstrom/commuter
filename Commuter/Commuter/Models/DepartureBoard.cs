@@ -77,6 +77,8 @@ namespace Commuter.Models
 
                         UpdateStopPoints(stopArea, sa.StopPoints);
 
+                        SortStopPointsByName(stopArea);
+
                         logger.LogDebug($"Updated StopPoints for StopArea {stopArea.Name}");
                     }
                 });
@@ -92,6 +94,13 @@ namespace Commuter.Models
             }
 
             IsLoadingData = false;
+        }
+
+        private void SortStopPointsByName(StopArea stopArea)
+        {
+            stopArea.SortBy(x => x.Name);
+
+            logger.LogDebug($"¨Sorted StopPoints");
         }
 
         public async Task ClearAsync()
@@ -139,7 +148,7 @@ namespace Commuter.Models
 
         private void UpdateDepartures(StopArea stopArea, Data.StopPoint fetchedStopPoint, StopPoint stopPoint)
         {
-            foreach (var fetchedDeparture in fetchedStopPoint.Departures.Take(DepartureDisplayLimit))
+            foreach (var fetchedDeparture in fetchedStopPoint.Departures.Take(GetDepartureCacheLimit()))
             {
                 var departure = stopPoint.FirstOrDefault(x => x.RunNo == fetchedDeparture.RunNo);
                 if (departure == null)
@@ -160,6 +169,11 @@ namespace Commuter.Models
 
                 logger.LogDebug($"Updated Departure {departure.Name} {departure.Towards} with {departure.RunNo} to StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
             }
+        }
+
+        private static int GetDepartureCacheLimit()
+        {
+            return DepartureDisplayLimit + (int)Math.Ceiling(DepartureDisplayLimit * 0.5);
         }
 
         private void CleanUpDepartures(StopArea stopArea, StopPoint stopPoint)
