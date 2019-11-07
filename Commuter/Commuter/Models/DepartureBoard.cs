@@ -80,13 +80,13 @@ namespace Commuter.Models
                         logger.LogDebug($"Updated StopPoints for StopArea {stopArea.Name}");
                     }
                 });
-
-                IsLoadingData = false;
             }
             finally
             {
                 IsLoadingData = false;
             }
+
+            IsLoadingData = false;
         }
 
         public async Task ClearAsync()
@@ -117,54 +117,59 @@ namespace Commuter.Models
                     logger.LogDebug($"Added StopPoint {stopPoint.Name} to StopArea {stopArea.Name}");
                 }
 
-                // INFO: Clean up departed departures.
+                CleanUpDepartures(stopArea, stopPoint);
 
-                foreach (var departure in stopPoint.Where(x => DateTime.Now.Truncate(TimeSpan.FromSeconds(1)) > x.Time).ToArray())
-                {
-                    logger.LogDebug($"Removed Departure {departure.Name} {departure.Towards} with {departure.RunNo} from StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
-                    stopPoint.Remove(departure);
-                }
+                UpdateDepartures(stopArea, fetchedStopPoint, stopPoint);
 
-                foreach (var fetchedDeparture in fetchedStopPoint.Departures.Take(DepartureDisplayLimit))
+                SortDeparturesByDepartureTime(stopArea, stopPoint);
+            }
+        }
+
+        private void SortDeparturesByDepartureTime(StopArea stopArea, StopPoint stopPoint)
+        {
+            stopPoint.SortBy(x => x.Time);
+
+            logger.LogDebug($"Sorted Departures at StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
+        }
+
+        private void UpdateDepartures(StopArea stopArea, Data.StopPoint fetchedStopPoint, StopPoint stopPoint)
+        {
+            foreach (var fetchedDeparture in fetchedStopPoint.Departures.Take(DepartureDisplayLimit))
+            {
+                var departure = stopPoint.FirstOrDefault(x => x.RunNo == fetchedDeparture.RunNo);
+                if (departure == null)
                 {
-                    var departure = stopPoint.FirstOrDefault(x => x.RunNo == fetchedDeparture.RunNo);
-                    if (departure == null)
+                    departure = new Departure
                     {
-                        departure = new Departure
-                        {
-                            RunNo = fetchedDeparture.RunNo
-                        };
-                        stopPoint.Add(departure);
-                        logger.LogDebug($"Added Departure {departure.Name} {departure.Towards} with {departure.RunNo} to StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
-                    }
-
-                    departure.LineType = fetchedDeparture.LineType;
-                    departure.Line = fetchedDeparture.Line;
-                    departure.Name = fetchedDeparture.Name;
-                    departure.Towards = fetchedDeparture.Towards;
-                    departure.Time = fetchedDeparture.DepartureTime;
-
-                    logger.LogDebug($"Updated Departure {departure.Name} {departure.Towards} with {departure.RunNo} to StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
+                        RunNo = fetchedDeparture.RunNo
+                    };
+                    stopPoint.Add(departure);
+                    logger.LogDebug($"Added Departure {departure.Name} {departure.Towards} with {departure.RunNo} to StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
                 }
 
-                stopPoint.SortBy(x => x.Time);
+                departure.LineType = fetchedDeparture.LineType;
+                departure.Line = fetchedDeparture.Line;
+                departure.Name = fetchedDeparture.Name;
+                departure.Towards = fetchedDeparture.Towards;
+                departure.Time = fetchedDeparture.DepartureTime;
 
-                logger.LogDebug($"Sorted Departures at StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
+                logger.LogDebug($"Updated Departure {departure.Name} {departure.Towards} with {departure.RunNo} to StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
+            }
+        }
+
+        private void CleanUpDepartures(StopArea stopArea, StopPoint stopPoint)
+        {
+            foreach (var departure in stopPoint.Where(x => DateTime.Now.Truncate(TimeSpan.FromSeconds(1)) > x.Time).ToArray())
+            {
+                logger.LogDebug($"Removed Departure {departure.Name} {departure.Towards} with {departure.RunNo} from StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
+                stopPoint.Remove(departure);
             }
         }
 
         private void UpdateStopAreas(IEnumerable<(int StopAreaId, string Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)> fetchedStopAreas)
         {
-
             // INFO: Delete StopAreas that have not been recently fetched
-            foreach (var stopArea in this.ToArray())
-            {
-                if (!fetchedStopAreas.Any(d => d.StopAreaId == stopArea.StopAreaId))
-                {
-                    Remove(stopArea);
-                    logger.LogDebug($"Removed StopArea {stopArea.Name}");
-                }
-            }
+            CleanUpStopAreas(fetchedStopAreas);
 
             foreach (var fetchedStopArea in fetchedStopAreas)
             {
@@ -182,15 +187,32 @@ namespace Commuter.Models
                     logger.LogDebug($"Added StopArea {stopArea.Name}");
                 }
 
-                // INFO: The distance can change in the field
+                // INFO: The distance can change out in the field
                 stopArea.Distance = fetchedStopArea.Distance;
 
                 logger.LogDebug($"Updated StopArea {stopArea.Name}");
             }
 
+            SortStopAreasByDistance();
+        }
+
+        private void SortStopAreasByDistance()
+        {
             this.SortBy(x => x.Distance);
 
             logger.LogDebug($"¨Sorted StopAreas");
+        }
+
+        private void CleanUpStopAreas(IEnumerable<(int StopAreaId, string Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)> fetchedStopAreas)
+        {
+            foreach (var stopArea in this.ToArray())
+            {
+                if (!fetchedStopAreas.Any(d => d.StopAreaId == stopArea.StopAreaId))
+                {
+                    Remove(stopArea);
+                    logger.LogDebug($"Removed StopArea {stopArea.Name}");
+                }
+            }
         }
 
         protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
