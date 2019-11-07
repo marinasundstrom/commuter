@@ -29,7 +29,7 @@ This has been implemented:
 
 Android:
 
-<img src="Screenshots/android.jpeg" alt="On Android" width="300">
+<img src="Screenshots/android.png" alt="On Android" width="300">
 
 iOS:
 
