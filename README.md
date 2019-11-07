@@ -2,7 +2,7 @@
 
 ## User Story
 
-As a daily Commuter, I want to be able to see the upcoming Departures at the closest Stop Areas so that I know when to leave to/from work.
+As a daily Commuter, I want to be able to see the upcoming Departures at the closest Stop Areas so that I know when to leave for/from work.
  
 ### Acceptance Critera
 
@@ -25,3 +25,6 @@ This has been implemented:
 * Set custom radius
 * Widgets for iOS and Android
 * Integration with Skånetrafiken app: linking
+
+## License
+Apache License, Version 2.0
