@@ -21,6 +21,11 @@ This has been implemented:
 * Available for iOS och Android
 * Built on .NET with Xamarin.Forms
 
+## Screenshots
+
+<img src="Screenshots/android.jpeg" alt="On Android" width="300">
+<img src="Screenshots/ios.png" alt="On iOS" width="300">
+
 ## Futures
 * Set custom radius
 * Widgets for iOS and Android
