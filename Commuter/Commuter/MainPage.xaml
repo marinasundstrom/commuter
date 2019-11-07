@@ -11,6 +11,7 @@
 
     <ContentPage.Resources>
         <converters:HumanizeTimeConverter x:Key="HumanizeTimeConverter" />
+        <converters:HumanizeDistanceConverter x:Key="HumanizeDistanceConverter" />
     </ContentPage.Resources>
 
     <ListView
@@ -26,18 +27,19 @@
         <ListView.GroupHeaderTemplate>
             <DataTemplate>
                 <ViewCell>
-                    <Grid Margin="15,12,15,5">
-                        <StackLayout Orientation="Horizontal">
-                            <Label FontSize="Header" FontAttributes="Bold" Text="{Binding Name}" />
-                        </StackLayout>
-                        <StackLayout
-                            Margin="0,0,0,0"
-                            HorizontalOptions="End"
-                            Orientation="Horizontal">
-                            <Label HorizontalOptions="End" Text="{Binding Distance}" />
-                            <Label Text="meters" />
-                        </StackLayout>
-                    </Grid>
+                    <StackLayout BackgroundColor="#D7D7D7">
+                        <Grid Margin="15,12,15,5">
+                            <StackLayout Orientation="Horizontal">
+                                <Label FontSize="Header" FontAttributes="Bold" Text="{Binding Name}" />
+                            </StackLayout>
+                            <StackLayout
+                                Margin="0,0,0,0"
+                                HorizontalOptions="End"
+                                Orientation="Horizontal">
+                                <Label HorizontalOptions="End" Text="{Binding Distance, Converter={StaticResource HumanizeDistanceConverter}}" />
+                            </StackLayout>
+                        </Grid>
+                    </StackLayout>
                 </ViewCell>
             </DataTemplate>
         </ListView.GroupHeaderTemplate>
@@ -48,7 +50,7 @@
                     <StackLayout>
                         <StackLayout
                             Padding="15,10,0,10"
-                            BackgroundColor="#D7D7D7"
+                            BackgroundColor="#F1F1F1"
                             Orientation="Horizontal">
                             <Label FontAttributes="Bold" Text="Position" />
                             <Label FontAttributes="Bold" Text="{Binding Name}" />
@@ -60,7 +62,7 @@
                                         <Grid Margin="0,5,15,5">
                                             <StackLayout Orientation="Horizontal">
                                                 <Label Text="{Binding Name}" />
-                                                <Label Text="{Binding Towards}" />
+                                                <Label Text="{Binding Towards}" LineBreakMode="TailTruncation" WidthRequest="250"/>
                                             </StackLayout>
                                             <StackLayout HorizontalOptions="End" Orientation="Horizontal">
                                                 <Label HorizontalOptions="End" Text="{Binding Time, Converter={StaticResource HumanizeTimeConverter}}" />
