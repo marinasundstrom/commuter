@@ -10,8 +10,8 @@ As a daily Commuter, I want to be able to see the upcoming Departures at the clo
  
 ### Acceptance Critera
 
-* List all Departures at Stop Areas within a certain radius.
-* Show the distance to a stop area relative to the Commuter/User.
+* List top 4 Departures at the closest Stop Areas within a certain radius.
+* Display the distance to a Stop Area relative to the position of the Commuter/User.
 * UX should look similar to how Skånetrafiken's (the regional collective traffic service) departure boards look.
 
 ## Specification
