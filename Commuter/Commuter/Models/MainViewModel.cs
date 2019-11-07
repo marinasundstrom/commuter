@@ -37,8 +37,7 @@ namespace Commuter.Models
 
                 if (timer == null)
                 {
-                    cancellationTokenSource = new CancellationTokenSource();
-                    timer = new Timer(async data => await Cycle(cancellationTokenSource.Token), null, 10000, 10000);
+                    timer = new Timer(async data => await Cycle(), null, 10000, 10000);
                 }
             }
             catch (Exception exception)
@@ -47,11 +46,23 @@ namespace Commuter.Models
             }
         }
 
-        private async Task Cycle(CancellationToken cancellationToken)
+        private async Task Cycle()
         {
             try
             {
-                await DepartureBoard.UpdateAsync(cancellationToken);
+                if (cancellationTokenSource == null)
+                {
+                    cancellationTokenSource = new CancellationTokenSource();
+                }
+                try
+                {
+                    await DepartureBoard.UpdateAsync(cancellationTokenSource.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                     cancellationTokenSource.Dispose();
+                     cancellationTokenSource = null;
+                }
                 lastFetch = DateTime.Now;
             }
             catch (Exception exception)
@@ -76,7 +87,14 @@ namespace Commuter.Models
 
                 await Task.Delay(50);
 
-                await DepartureBoard.UpdateAsync();
+                try
+                {
+                    await DepartureBoard.UpdateAsync();
+                }
+                catch (OperationCanceledException)
+                {
+
+                }
 
                 lastFetch = DateTime.Now;
             }

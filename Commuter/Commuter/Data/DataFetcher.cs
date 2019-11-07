@@ -24,20 +24,18 @@ namespace Commuter.Data
 
         public async Task<IEnumerable<(int StopAreaId, string Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)>> FetchData(CancellationToken cancellationToken = default)
         {
-            var fetchedStopAreas = await GetStopAreasAsync();
+            var fetchedStopAreas = await GetStopAreasAsync(cancellationToken);
 
             logger.LogDebug("Fetched StopAreas");
-
-             cancellationToken.ThrowIfCancellationRequested();
 
             return await FetchStopAreaStopPoints(fetchedStopAreas);
         }
 
-        private async Task<IEnumerable<(int StopAreaId, string Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)>> FetchStopAreaStopPoints(IEnumerable<Data.StopArea> fetchedStopAreas)
+        private async Task<IEnumerable<(int StopAreaId, string Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)>> FetchStopAreaStopPoints(IEnumerable<Data.StopArea> fetchedStopAreas, CancellationToken cancellationToken = default)
         {
             return (await Task.WhenAll(
                 fetchedStopAreas.Select(async fsa =>
-                    (fsa.StopAreaId, fsa.Name, Distance: (int)fsa.Distance, fsa.X, fsa.Y, StopPoints: await departureFetcher.GetDeparturesByStopPointAsync(fsa.StopAreaId, GetDesiredDepartureTime()))))).AsEnumerable();
+                    (fsa.StopAreaId, fsa.Name, Distance: (int)fsa.Distance, fsa.X, fsa.Y, StopPoints: await departureFetcher.GetDeparturesByStopPointAsync(fsa.StopAreaId, GetDesiredDepartureTime(), cancellationToken: cancellationToken))))).AsEnumerable();
         }
 
         private static async Task<Location> GetCoordinates()
@@ -52,11 +50,11 @@ namespace Commuter.Data
             }
         }
 
-        private async Task<IEnumerable<Data.StopArea>> GetStopAreasAsync()
+        private async Task<IEnumerable<Data.StopArea>> GetStopAreasAsync(CancellationToken cancellationToken = default)
         {
             var location = await GetCoordinates();
             var radius = 400;
-            return await stopAreaFetcher.GetNearestStopAreasAsync(location.Latitude, location.Longitude, radius);
+            return await stopAreaFetcher.GetNearestStopAreasAsync(location.Latitude, location.Longitude, radius, cancellationToken);
         }
 
         private static DateTime GetDesiredDepartureTime()

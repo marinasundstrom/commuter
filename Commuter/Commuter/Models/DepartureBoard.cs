@@ -83,10 +83,6 @@ namespace Commuter.Models
 
                 IsLoadingData = false;
             }
-            catch (Exception e)
-            {
-
-            }
             finally
             {
                 IsLoadingData = false;

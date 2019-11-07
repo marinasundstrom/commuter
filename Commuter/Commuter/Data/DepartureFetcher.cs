@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Skanetrafiken.API.DepartureArrival;
@@ -16,7 +17,7 @@ namespace Commuter.Data
             client = openApiClient;
         }
 
-        public async Task<IEnumerable<StopPoint>> GetDeparturesByStopPointAsync(int stopArea, DateTime departureTime = default)
+        public async Task<IEnumerable<StopPoint>> GetDeparturesByStopPointAsync(int stopArea, DateTime departureTime = default, CancellationToken cancellationToken = default)
         {
             var departures = await client.GetGetDepartureArrivalsAsync(stopArea, departureTime);
             var departuresByStopPoint = departures.GroupBy(x => x.StopPoint);

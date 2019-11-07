@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Commuter;
@@ -15,9 +16,9 @@ namespace Commuter.Data
             client = openApiClient;
         }
 
-        public async Task<IEnumerable<StopArea>> GetNearestStopAreasAsync(double longitude, double latitude, int radius)
+        public async Task<IEnumerable<StopArea>> GetNearestStopAreasAsync(double longitude, double latitude, int radius, CancellationToken cancellationToken = default)
         {
-            var stopAreas = await client.GetNearestStopAreasAsync(longitude, latitude, radius);
+            var stopAreas = await client.GetNearestStopAreasAsync(longitude, latitude, radius, cancellationToken);
             return stopAreas.Select(x => new StopArea
             {
                 StopAreaId = (int)x.Id,
