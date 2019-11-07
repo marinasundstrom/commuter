@@ -60,8 +60,11 @@ namespace Commuter.Models
                 }
                 catch (OperationCanceledException)
                 {
-                     cancellationTokenSource.Dispose();
-                     cancellationTokenSource = null;
+                    if (cancellationTokenSource != null)
+                    {
+                        cancellationTokenSource.Dispose();
+                        cancellationTokenSource = null;
+                    }
                 }
                 lastFetch = DateTime.Now;
             }

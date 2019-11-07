@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace Commuter.Data
             this.logger = logger;
         }
 
-        public async Task<IEnumerable<(int StopAreaId, string Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)>> FetchData(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<(int StopAreaId, string? Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)>> FetchData(CancellationToken cancellationToken = default)
         {
             var fetchedStopAreas = await GetStopAreasAsync(cancellationToken);
 
@@ -31,18 +32,24 @@ namespace Commuter.Data
             return await FetchStopAreaStopPoints(fetchedStopAreas);
         }
 
-        private async Task<IEnumerable<(int StopAreaId, string Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)>> FetchStopAreaStopPoints(IEnumerable<Data.StopArea> fetchedStopAreas, CancellationToken cancellationToken = default)
+        private async Task<IEnumerable<(int StopAreaId, string? Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)>> FetchStopAreaStopPoints(IEnumerable<Data.StopArea> fetchedStopAreas, CancellationToken cancellationToken = default)
         {
-            return (await Task.WhenAll(
-                fetchedStopAreas.Select(async fsa =>
-                    (fsa.StopAreaId, fsa.Name, Distance: (int)fsa.Distance, fsa.X, fsa.Y, StopPoints: await departureFetcher.GetDeparturesByStopPointAsync(fsa.StopAreaId, GetDesiredDepartureTime(), cancellationToken: cancellationToken))))).AsEnumerable();
+            var results = new List<(int StopAreaId, string? Name, int Distance, float X, float Y, IEnumerable<StopPoint> StopPoints)>();
+
+            foreach(var fsa in fetchedStopAreas)
+            {
+                results.Add((fsa.StopAreaId, fsa.Name, Distance: (int)fsa.Distance, fsa.X, fsa.Y, StopPoints: await departureFetcher.GetDeparturesByStopPointAsync(fsa.StopAreaId, GetDesiredDepartureTime(), cancellationToken: cancellationToken)));
+            }
+
+            return results.AsEnumerable();
         }
 
         private static async Task<Location> GetCoordinates()
         {
-            if (Utils.IsRunningInSimulator)
+            if (Utils.IsRunningInSimulator || Debugger.IsAttached)
             {
-                return await Task.FromResult(new Location(55.6906897, 13.1899686));
+                //return await Task.FromResult(new Location(55.608975, 12.9985393)); // Malmö C
+                return await Task.FromResult(new Location(55.605618, 13.0206813)); // Värnhemstorget
             }
             else
             {

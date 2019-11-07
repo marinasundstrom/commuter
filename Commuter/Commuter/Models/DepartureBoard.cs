@@ -48,7 +48,7 @@ namespace Commuter.Models
 
                 IsLoadingData = true;
 
-                var fetchedStopAreas = await dataFetcher.FetchData(cancellationToken);
+                    var fetchedStopAreas = await dataFetcher.FetchData(cancellationToken);
 
                 if (!fetchedStopAreas.Any())
                 {
@@ -80,6 +80,11 @@ namespace Commuter.Models
                         logger.LogDebug($"Updated StopPoints for StopArea {stopArea.Name}");
                     }
                 });
+            }
+            catch (Exception e)
+            {
+                // Leave it here for debugging
+                throw;
             }
             finally
             {
