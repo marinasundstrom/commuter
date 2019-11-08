@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Commuter.Data;
+using Commuter.Services;
 using Microsoft.Extensions.Logging;
+using System.Reactive.Linq;
 
 using Xamarin.Forms;
 
@@ -11,15 +14,22 @@ namespace Commuter.Models
     public class MainViewModel : ObservableObject, IDisposable
     {
         private Command? refreshCommand;
+        private readonly DataFetcher dataFetcher;
+        private readonly DepartureBoardPeriodicUpdater departureBoardPeriodicUpdater;
         private readonly ILogger<MainViewModel> logger;
-        private CancellationTokenSource? cancellationTokenSource;
-        private Timer? timer = null;
         private bool isRefreshing;
         private DateTime lastFetch;
+        private IDisposable? disposable;
 
-        public MainViewModel(IDepartureBoard departureBoardViewModel, ILogger<MainViewModel> logger)
+        public MainViewModel(
+            IDepartureBoard departureBoardViewModel,
+            DataFetcher dataFetcher,
+            DepartureBoardPeriodicUpdater departureBoardPeriodicUpdater,
+            ILogger<MainViewModel> logger)
         {
             DepartureBoard = departureBoardViewModel;
+            this.dataFetcher = dataFetcher;
+            this.departureBoardPeriodicUpdater = departureBoardPeriodicUpdater;
             this.logger = logger;
         }
 
@@ -31,14 +41,13 @@ namespace Commuter.Models
         {
             try
             {
-                await DepartureBoard.UpdateAsync();
+                await CleanAndRefresh();
 
-                lastFetch = DateTime.Now;
+                disposable = departureBoardPeriodicUpdater.WhenUpdated.Subscribe(Cycle);
 
-                if (timer == null)
-                {
-                    timer = new Timer(async data => await Cycle(), null, 10000, 10000);
-                }
+                await Task.Delay(10000);
+
+                departureBoardPeriodicUpdater.Start();
             }
             catch (Exception exception)
             {
@@ -46,27 +55,36 @@ namespace Commuter.Models
             }
         }
 
-        private async Task Cycle()
+        private async Task CleanAndRefresh()
         {
             try
             {
-                if (cancellationTokenSource == null)
+                var data = new List<IStopArea>();
+                await foreach (var item in dataFetcher.FetchData())
                 {
-                    cancellationTokenSource = new CancellationTokenSource();
+                    data.Add(item);
                 }
-                try
-                {
-                    await DepartureBoard.UpdateAsync(cancellationTokenSource.Token);
-                }
-                catch (OperationCanceledException)
-                {
-                    if (cancellationTokenSource != null)
-                    {
-                        cancellationTokenSource.Dispose();
-                        cancellationTokenSource = null;
-                    }
-                }
-                lastFetch = DateTime.Now;
+                await DepartureBoard.ClearAsync();
+                await DepartureBoard.UpdateAsync(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            lastFetch = DateTime.Now;
+        }
+
+        private async void Cycle(IEnumerable<IStopArea> data)
+        {
+            try
+            {
+                //if (lastFetch.AddSeconds(10) > lastFetch)
+                //{
+                    await DepartureBoard.UpdateAsync(data);
+
+                    lastFetch = DateTime.Now;
+                //}
             }
             catch (Exception exception)
             {
@@ -80,24 +98,7 @@ namespace Commuter.Models
 
             try
             {
-                if (cancellationTokenSource != null)
-                {
-                    cancellationTokenSource.Cancel();
-                }
-                await DepartureBoard.ClearAsync();
-
-                logger.LogInformation("Cleared timetable");
-
-                await Task.Delay(50);
-
-                try
-                {
-                    await DepartureBoard.UpdateAsync();
-                }
-                catch (OperationCanceledException)
-                {
-
-                }
+                await CleanAndRefresh();
 
                 lastFetch = DateTime.Now;
             }
@@ -121,16 +122,8 @@ namespace Commuter.Models
 
         public void Dispose()
         {
-            if (cancellationTokenSource != null)
-            {
-                cancellationTokenSource.Cancel();
-                cancellationTokenSource.Dispose();
-                cancellationTokenSource = null;
-            }
-            if (timer != null)
-            {
-                timer.Dispose();
-            }
+            disposable?.Dispose();
+            departureBoardPeriodicUpdater.Stop();
             IsRefreshing = false;
         }
     }

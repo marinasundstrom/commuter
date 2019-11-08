@@ -5,7 +5,7 @@ using System.Net.Http;
 using Commuter.Data;
 using Commuter.Helpers;
 using Commuter.Models;
-
+using Commuter.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -65,7 +65,8 @@ namespace Commuter
             services
                 .AddTransient<StopAreaFetcher>()
                 .AddTransient<DepartureFetcher>()
-                .AddTransient<DataFetcher>();
+                .AddTransient<DataFetcher>()
+                .AddTransient<DepartureBoardPeriodicUpdater>();
 
             services
               .AddSingleton<MainViewModel>()

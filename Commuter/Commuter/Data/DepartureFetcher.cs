@@ -42,7 +42,7 @@ namespace Commuter.Data
                         stopPoints.Add(stopPoint);
                     }
 
-                    stopPoint.Departures.Add(CreateDeparture(departure));
+                    stopPoint.Departures.Add(CreateDeparture(departure!));
                 }
             }
 

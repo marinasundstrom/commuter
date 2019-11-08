@@ -19,53 +19,23 @@ namespace Commuter.Models
 {
     public class DepartureBoardViewModel : ObservableCollection<StopArea>, IDepartureBoard
     {
-        private readonly DataFetcher dataFetcher;
         private readonly ILogger<DepartureBoardViewModel> logger;
-        private readonly CancellationTokenSource? cancellationTokenSource;
-        private readonly DateTime lastFetch;
-        private bool isLoadingData;
         private const int DepartureDisplayLimit = 4;
 
-        public DepartureBoardViewModel(DataFetcher dataFetcher, ILogger<DepartureBoardViewModel> logger)
+        public DepartureBoardViewModel(ILogger<DepartureBoardViewModel> logger)
         {
-            this.dataFetcher = dataFetcher;
             this.logger = logger;
         }
 
-        public bool IsLoadingData { get => isLoadingData; set => SetProperty(ref isLoadingData, value); }
-
-        public async Task UpdateAsync(CancellationToken cancellationToken = default)
+        public async Task UpdateAsync(IEnumerable<IStopArea> data)
         {
             try
             {
                 logger.LogDebug("Loading Departure Board");
 
-                if (IsLoadingData)
-                {
-                    logger.LogDebug("Load is already in progress");
-                    return;
-                }
-
-                IsLoadingData = true;
-
-                    var fetchedStopAreas = await dataFetcher.FetchData(cancellationToken);
-
-                if (!fetchedStopAreas.Any())
-                {
-                    logger.LogDebug("No data found.");
-                    IsLoadingData = false;
-                    return;
-                }
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    logger.LogDebug("Update was cancelled");
-                    return;
-                }
-
                 await Device.InvokeOnMainThreadAsync(() =>
                 {
-                    UpdateStopAreas(fetchedStopAreas);
+                    UpdateStopAreas(data);
 
                     logger.LogDebug("StopAreas updated");
 
@@ -73,7 +43,7 @@ namespace Commuter.Models
                     {
                         logger.LogDebug($"Fetched StopPoints and Departures for StopArea {stopArea.Name}");
 
-                        var sa = fetchedStopAreas.First(sa => sa.StopAreaId == stopArea.StopAreaId);
+                        var sa = data.First(sa => sa.StopAreaId == stopArea.StopAreaId);
 
                         UpdateStopPoints(stopArea, sa.StopPoints);
 
@@ -83,17 +53,11 @@ namespace Commuter.Models
                     }
                 });
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Leave it here for debugging
                 throw;
             }
-            finally
-            {
-                IsLoadingData = false;
-            }
-
-            IsLoadingData = false;
         }
 
         private void SortStopPointsByName(StopArea stopArea)
@@ -105,10 +69,6 @@ namespace Commuter.Models
 
         public async Task ClearAsync()
         {
-            while (IsLoadingData)
-            {
-                await Task.Delay(500);
-            }
             await Device.InvokeOnMainThreadAsync(() =>
             {
                 Clear();
@@ -185,7 +145,7 @@ namespace Commuter.Models
             }
         }
 
-        private void UpdateStopAreas(IEnumerable<(int StopAreaId, string Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)> fetchedStopAreas)
+        private void UpdateStopAreas(IEnumerable<IStopArea> fetchedStopAreas)
         {
             // INFO: Delete StopAreas that have not been recently fetched
             CleanUpStopAreas(fetchedStopAreas);
@@ -222,7 +182,7 @@ namespace Commuter.Models
             logger.LogDebug($"¨Sorted StopAreas");
         }
 
-        private void CleanUpStopAreas(IEnumerable<(int StopAreaId, string Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)> fetchedStopAreas)
+        private void CleanUpStopAreas(IEnumerable<IStopArea> fetchedStopAreas)
         {
             foreach (var stopArea in this.ToArray())
             {

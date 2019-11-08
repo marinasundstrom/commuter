@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Commuter.Helpers;
@@ -23,38 +24,54 @@ namespace Commuter.Data
             this.logger = logger;
         }
 
-        public async Task<IEnumerable<(int StopAreaId, string? Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)>> FetchData(CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<IStopArea> FetchData([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var fetchedStopAreas = await GetStopAreasAsync(cancellationToken);
 
-            logger.LogDebug("Fetched StopAreas");
-
-            return await FetchStopAreaStopPoints(fetchedStopAreas);
-        }
-
-        private async Task<IEnumerable<(int StopAreaId, string? Name, int Distance, float X, float Y, IEnumerable<Data.StopPoint> StopPoints)>> FetchStopAreaStopPoints(IEnumerable<Data.StopArea> fetchedStopAreas, CancellationToken cancellationToken = default)
-        {
-            var results = new List<(int StopAreaId, string? Name, int Distance, float X, float Y, IEnumerable<StopPoint> StopPoints)>();
-
-            foreach(var fsa in fetchedStopAreas)
+            if (cancellationToken.IsCancellationRequested)
             {
-                results.Add((fsa.StopAreaId, fsa.Name, Distance: (int)fsa.Distance, fsa.X, fsa.Y, StopPoints: await departureFetcher.GetDeparturesByStopPointAsync(fsa.StopAreaId, GetDesiredDepartureTime(), cancellationToken: cancellationToken)));
+                yield break;
             }
 
-            return results.AsEnumerable();
+            logger.LogDebug("Fetched StopAreas");
+
+            await foreach(var fsa in FetchStopAreaStopPoints(fetchedStopAreas))
+            {
+                yield return fsa;
+            }
+        }
+
+        private async IAsyncEnumerable<IStopArea> FetchStopAreaStopPoints(IEnumerable<Data.StopArea> fetchedStopAreas, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            foreach(var fsa in fetchedStopAreas)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    yield break;
+                }
+
+                yield return new StopAreaInternal(
+                    fsa.StopAreaId,
+                    fsa.Name!,
+                    fsa.Distance,
+                    fsa.X,
+                    fsa.Y,
+                    await departureFetcher.GetDeparturesByStopPointAsync(fsa.StopAreaId, GetDesiredDepartureTime(), cancellationToken: cancellationToken));
+            }
         }
 
         private static async Task<Location> GetCoordinates()
         {
+            /*
             if (Utils.IsRunningInSimulator || Debugger.IsAttached)
             {
                 //return await Task.FromResult(new Location(55.608975, 12.9985393)); // Malmö C
                 return await Task.FromResult(new Location(55.605618, 13.0206813)); // Värnhemstorget
             }
             else
-            {
+            {*/
                 return await Xamarin.Essentials.Geolocation.GetLocationAsync();
-            }
+            //}
         }
 
         private async Task<IEnumerable<Data.StopArea>> GetStopAreasAsync(CancellationToken cancellationToken = default)
