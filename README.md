@@ -4,7 +4,9 @@ Mobile app for daily commuters in Skåne region, Sweden.
 
 For iOS and Android.
 
-## User Story
+## Main User Story
+
+> From [#12 [US] Main User Story](https://github.com/robertsundstrom/commuter/issues/12)
 
 As a daily Commuter, I want to be able to see the upcoming Departures at the closest Stop Areas so that I know when to leave for/from work.
  
