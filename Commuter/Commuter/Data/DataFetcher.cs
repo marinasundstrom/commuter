@@ -1,26 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Commuter.Helpers;
+using Commuter.Services;
+
 using Microsoft.Extensions.Logging;
+
 using Xamarin.Essentials;
 
 namespace Commuter.Data
 {
-    public class DataFetcher
+    public class DataFetcher : IDataFetcher
     {
-        private readonly StopAreaFetcher stopAreaFetcher;
-        private readonly DepartureFetcher departureFetcher;
+        private readonly IStopAreaFetcher stopAreaFetcher;
+        private readonly IDepartureFetcher departureFetcher;
+        private readonly IGeoLocationService geoLocationService;
         private readonly ILogger<DataFetcher> logger;
 
-        public DataFetcher(StopAreaFetcher stopAreaFetcher, DepartureFetcher departureFetcher, ILogger<DataFetcher> logger)
+        public DataFetcher(
+            IStopAreaFetcher stopAreaFetcher,
+            IDepartureFetcher departureFetcher,
+            IGeoLocationService geoLocationService,
+            ILogger<DataFetcher> logger)
         {
             this.stopAreaFetcher = stopAreaFetcher;
             this.departureFetcher = departureFetcher;
+            this.geoLocationService = geoLocationService;
             this.logger = logger;
         }
 
@@ -35,7 +44,7 @@ namespace Commuter.Data
 
             logger.LogDebug("Fetched StopAreas");
 
-            await foreach(var fsa in FetchStopAreaStopPoints(fetchedStopAreas))
+            await foreach (var fsa in FetchStopAreaStopPoints(fetchedStopAreas))
             {
                 yield return fsa;
             }
@@ -43,7 +52,7 @@ namespace Commuter.Data
 
         private async IAsyncEnumerable<IStopArea> FetchStopAreaStopPoints(IEnumerable<Data.StopArea> fetchedStopAreas, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            foreach(var fsa in fetchedStopAreas)
+            foreach (var fsa in fetchedStopAreas)
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -60,18 +69,18 @@ namespace Commuter.Data
             }
         }
 
-        private static async Task<Location> GetCoordinates()
+        private async Task<Location> GetCoordinates()
         {
-            /*
             if (Utils.IsRunningInSimulator || Debugger.IsAttached)
             {
                 //return await Task.FromResult(new Location(55.608975, 12.9985393)); // Malmö C
-                return await Task.FromResult(new Location(55.605618, 13.0206813)); // Värnhemstorget
+                //return await Task.FromResult(new Location(55.605618, 13.0206813)); // Värnhemstorget
+                return await Task.FromResult(new Location(55.480216, 13.499789)); // Skurup
             }
             else
-            {*/
-                return await Xamarin.Essentials.Geolocation.GetLocationAsync();
-            //}
+            {
+                return await geoLocationService.GetLocationAsync();
+            }
         }
 
         private async Task<IEnumerable<Data.StopArea>> GetStopAreasAsync(CancellationToken cancellationToken = default)

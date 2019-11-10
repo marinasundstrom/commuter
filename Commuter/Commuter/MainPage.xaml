@@ -40,8 +40,11 @@
                                 Margin="0,0,0,0"
                                 HorizontalOptions="End"
                                 Orientation="Horizontal">
-                                <Label HorizontalOptions="End" FontSize="{OnPlatform Default,
-                                                          Android=20}" Text="{Binding Distance, Converter={StaticResource HumanizeDistanceConverter}}" />
+                                <Label
+                                    FontSize="{OnPlatform Default,
+                                                          Android=20}"
+                                    HorizontalOptions="End"
+                                    Text="{Binding Distance, Converter={StaticResource HumanizeDistanceConverter}}" />
                             </StackLayout>
                         </Grid>
                     </StackLayout>

@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Commuter.Data;
+
 using Microsoft.Extensions.Logging;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 
 namespace Commuter.Services
 {
-    public class DepartureBoardPeriodicUpdater : IDisposable
+    public class DepartureBoardPeriodicUpdater : IDisposable, IDepartureBoardPeriodicUpdater
     {
-        private readonly DataFetcher dataFetcher;
+        private readonly IDataFetcher dataFetcher;
         private readonly ILogger<DepartureBoardPeriodicUpdater> logger;
         private Timer? timer;
-        private Subject<IEnumerable<IStopArea>> whenUpdatedSubject;
+        private readonly Subject<IEnumerable<IStopArea>> whenUpdatedSubject;
 
         public IObservable<IEnumerable<IStopArea>> WhenUpdated => whenUpdatedSubject;
 
-        public DepartureBoardPeriodicUpdater(DataFetcher dataFetcher, ILogger<DepartureBoardPeriodicUpdater> logger)
+        public DepartureBoardPeriodicUpdater(IDataFetcher dataFetcher, ILogger<DepartureBoardPeriodicUpdater> logger)
         {
             this.dataFetcher = dataFetcher;
             this.logger = logger;
@@ -39,7 +39,7 @@ namespace Commuter.Services
 
         public async Task Cycle()
         {
-            List<IStopArea> fetchedStopAreas = new List<IStopArea>();
+            var fetchedStopAreas = new List<IStopArea>();
             await foreach (var item in dataFetcher.FetchData())
             {
                 fetchedStopAreas.Add(item);

@@ -3,11 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Commuter;
-
 namespace Commuter.Data
 {
-    public class StopAreaFetcher
+    internal class StopAreaFetcher : IStopAreaFetcher
     {
         private readonly OpenApiClient client;
 

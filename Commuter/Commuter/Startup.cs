@@ -6,6 +6,7 @@ using Commuter.Data;
 using Commuter.Helpers;
 using Commuter.Models;
 using Commuter.Services;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -63,10 +64,11 @@ namespace Commuter
                      }));
 
             services
-                .AddTransient<StopAreaFetcher>()
-                .AddTransient<DepartureFetcher>()
-                .AddTransient<DataFetcher>()
-                .AddTransient<DepartureBoardPeriodicUpdater>();
+                .AddTransient<IStopAreaFetcher, StopAreaFetcher>()
+                .AddTransient<IDepartureFetcher, DepartureFetcher>()
+                .AddTransient<IDataFetcher, DataFetcher>()
+                .AddTransient<IDepartureBoardPeriodicUpdater, DepartureBoardPeriodicUpdater>()
+                .AddTransient<IGeoLocationService, GeoLocationService>();
 
             services
               .AddSingleton<MainViewModel>()

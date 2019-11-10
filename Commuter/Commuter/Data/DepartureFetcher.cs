@@ -8,7 +8,7 @@ using Skanetrafiken.API.DepartureArrival;
 
 namespace Commuter.Data
 {
-    public class DepartureFetcher
+    public class DepartureFetcher : IDepartureFetcher
     {
         private readonly OpenApiClient client;
 
@@ -24,7 +24,7 @@ namespace Commuter.Data
 
             var stopPoints = new List<StopPoint>();
 
-            // INFO: Create groups for Departures without a StopPoint
+            // INFO: Create groups for Departures without a set StopPoint
 
             var emptyStopPointGroup = departuresByStopPoint.FirstOrDefault(x => x.Key == string.Empty);
             if (emptyStopPointGroup != null)

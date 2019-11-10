@@ -6,6 +6,6 @@ namespace Commuter.Data
     {
         public string? Name { get; set; }
 
-        public List<Departure> Departures { get; } = new List<Departure>();
+        public List<Departure> Departures { get; set; } = new List<Departure>();
     }
 }

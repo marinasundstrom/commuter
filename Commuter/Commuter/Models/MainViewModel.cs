@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+
 using Commuter.Data;
 using Commuter.Services;
+
 using Microsoft.Extensions.Logging;
-using System.Reactive.Linq;
 
 using Xamarin.Forms;
 
@@ -14,8 +15,8 @@ namespace Commuter.Models
     public class MainViewModel : ObservableObject, IDisposable
     {
         private Command? refreshCommand;
-        private readonly DataFetcher dataFetcher;
-        private readonly DepartureBoardPeriodicUpdater departureBoardPeriodicUpdater;
+        private readonly IDataFetcher dataFetcher;
+        private readonly IDepartureBoardPeriodicUpdater departureBoardPeriodicUpdater;
         private readonly ILogger<MainViewModel> logger;
         private bool isRefreshing;
         private DateTime lastFetch;
@@ -23,8 +24,8 @@ namespace Commuter.Models
 
         public MainViewModel(
             IDepartureBoard departureBoardViewModel,
-            DataFetcher dataFetcher,
-            DepartureBoardPeriodicUpdater departureBoardPeriodicUpdater,
+            IDataFetcher dataFetcher,
+            IDepartureBoardPeriodicUpdater departureBoardPeriodicUpdater,
             ILogger<MainViewModel> logger)
         {
             DepartureBoard = departureBoardViewModel;
@@ -81,9 +82,9 @@ namespace Commuter.Models
             {
                 //if (lastFetch.AddSeconds(10) > lastFetch)
                 //{
-                    await DepartureBoard.UpdateAsync(data);
+                await DepartureBoard.UpdateAsync(data);
 
-                    lastFetch = DateTime.Now;
+                lastFetch = DateTime.Now;
                 //}
             }
             catch (Exception exception)
