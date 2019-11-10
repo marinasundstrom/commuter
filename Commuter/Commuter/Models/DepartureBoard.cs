@@ -4,15 +4,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 
 using Commuter.Data;
-using Commuter.Helpers;
 
 using Microsoft.Extensions.Logging;
 
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Commuter.Models
@@ -117,18 +114,29 @@ namespace Commuter.Models
                     {
                         RunNo = fetchedDeparture.RunNo
                     };
+
+                    SetDepartureProperties(fetchedDeparture, departure);
+
                     stopPoint.Add(departure);
+
                     logger.LogDebug($"Added Departure {departure.Name} {departure.Towards} with {departure.RunNo} to StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
                 }
-
-                departure.LineType = fetchedDeparture.LineType;
-                departure.Line = fetchedDeparture.Line;
-                departure.Name = fetchedDeparture.Name;
-                departure.Towards = fetchedDeparture.Towards;
-                departure.Time = fetchedDeparture.DepartureTime;
+                else
+                {
+                    SetDepartureProperties(fetchedDeparture, departure);
+                }
 
                 logger.LogDebug($"Updated Departure {departure.Name} {departure.Towards} with {departure.RunNo} to StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
             }
+        }
+
+        private static void SetDepartureProperties(Data.Departure fetchedDeparture, Departure departure)
+        {
+            departure.LineType = fetchedDeparture.LineType;
+            departure.Line = fetchedDeparture.Line;
+            departure.Name = fetchedDeparture.Name;
+            departure.Towards = fetchedDeparture.Towards;
+            departure.Time = fetchedDeparture.DepartureTime;
         }
 
         private static int GetDepartureCacheLimit()

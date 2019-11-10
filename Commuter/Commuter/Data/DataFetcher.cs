@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Commuter.Helpers;
 using Commuter.Services;
 
 using Microsoft.Extensions.Logging;
@@ -71,16 +69,16 @@ namespace Commuter.Data
 
         private async Task<Location> GetCoordinates()
         {
-            if (Utils.IsRunningInSimulator || Debugger.IsAttached)
-            {
-                //return await Task.FromResult(new Location(55.608975, 12.9985393)); // Malmö C
-                //return await Task.FromResult(new Location(55.605618, 13.0206813)); // Värnhemstorget
-                return await Task.FromResult(new Location(55.480216, 13.499789)); // Skurup
-            }
-            else
-            {
-                return await geoLocationService.GetLocationAsync();
-            }
+            //if (Utils.IsRunningInSimulator || Debugger.IsAttached)
+            //{
+            //    //return await Task.FromResult(new Location(55.608975, 12.9985393)); // Malmö C
+            //    //return await Task.FromResult(new Location(55.605618, 13.0206813)); // Värnhemstorget
+            //    //return await Task.FromResult(new Location(55.480216, 13.499789)); // Skurup
+            //}
+            //else
+            //{
+            return await geoLocationService.GetLocationAsync();
+            //}
         }
 
         private async Task<IEnumerable<Data.StopArea>> GetStopAreasAsync(CancellationToken cancellationToken = default)

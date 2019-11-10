@@ -75,7 +75,7 @@ namespace Commuter
               .AddSingleton<IDepartureBoard, DepartureBoardViewModel>();
 
             services
-             .AddTransient<App>()
+             .AddSingleton<App>()
              .AddTransient<MainPage>();
         }
 
