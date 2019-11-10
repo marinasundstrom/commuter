@@ -47,3 +47,10 @@ iOS:
 
 ## License
 Apache License, Version 2.0
+
+## Contribution
+
+Feel free to engage in the discussion in the [Issues](https://github.com/robertsundstrom/commuter/issues) section. There you also find User Stories.
+
+Pull requests are welcome.
+
