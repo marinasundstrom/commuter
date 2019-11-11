@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace Commuter.Data
                 X = x.X,
                 Y = x.Y,
                 Distance = x.Distance
-            }).ToArray();
+            }).ToArray() ?? Array.Empty<StopArea>();
         }
     }
 }
