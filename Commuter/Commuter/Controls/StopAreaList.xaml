@@ -15,8 +15,8 @@
     mc:Ignorable="d">
 
     <ListView.Resources>
-        <converters:HumanizeTimeConverter x:Key="HumanizeTimeConverter" />
-        <converters:HumanizeDistanceConverter x:Key="HumanizeDistanceConverter" />
+        <converters:TimeConverter x:Key="TimeConverter" />
+        <converters:DistanceConverter x:Key="DistanceConverter" />
         <converters:ColorConverter x:Key="ColorConverter" />
         <converters:StopPointNameConverter x:Key="StopPointNameConverter" />
         <converters:FontColorConverter x:Key="FontColorConverter" />
@@ -43,7 +43,7 @@
                                 FontSize="{OnPlatform Default,
                                                       Android=20}"
                                 HorizontalOptions="End"
-                                Text="{Binding Distance, Converter={StaticResource HumanizeDistanceConverter}}" />
+                                Text="{Binding Distance, Converter={StaticResource DistanceConverter}}" />
                         </StackLayout>
                     </Grid>
                 </StackLayout>
@@ -72,7 +72,7 @@
                                                 WidthRequest="40"
                                                 Padding="5"
                                                 HorizontalTextAlignment="Center"
-                                                Text="{Binding Line}"
+                                                Text="{Binding No}"
                                                 BackgroundColor="{Binding Converter={StaticResource ColorConverter}}"
                                                 TextColor="{Binding Converter={StaticResource FontColorConverter}}"/>
                                             </StackLayout>
@@ -87,7 +87,7 @@
                                             Orientation="Horizontal">
                                             <Label HorizontalOptions="End"
                                                    Margin="0,5,0,0"
-                                                   Text="{Binding Time, Converter={StaticResource HumanizeTimeConverter}}" />
+                                                   Text="{Binding Time, Converter={StaticResource TimeConverter}}" />
                                         </StackLayout>
                                     </Grid>
                                     <!--<Grid BackgroundColor="#ec9a00">

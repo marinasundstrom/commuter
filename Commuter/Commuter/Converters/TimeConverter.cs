@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Globalization;
 
-using Humanizer;
-using Humanizer.Localisation;
-
 using Xamarin.Forms;
 
 namespace Commuter.Converters
 {
-    internal class HumanizeTimeConverter : IValueConverter
+    internal class TimeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -24,7 +21,7 @@ namespace Commuter.Converters
                 return $"{time.ToString("HH:mm")}";
             }
 
-            return $"{(time - DateTime.Now).Humanize(minUnit: TimeUnit.Minute)}";
+            return $"{(time - DateTime.Now).Minutes} min";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

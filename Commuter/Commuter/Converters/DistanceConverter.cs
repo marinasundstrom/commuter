@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace Commuter.Converters
 {
-    internal class HumanizeDistanceConverter : IValueConverter
+    internal class DistanceConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
