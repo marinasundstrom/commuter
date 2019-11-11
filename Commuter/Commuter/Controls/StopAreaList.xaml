@@ -18,6 +18,7 @@
         <converters:HumanizeTimeConverter x:Key="HumanizeTimeConverter" />
         <converters:HumanizeDistanceConverter x:Key="HumanizeDistanceConverter" />
         <converters:ColorConverter x:Key="ColorConverter" />
+        <converters:StopPointNameConverter x:Key="StopPointNameConverter" />
         <converters:FontColorConverter x:Key="FontColorConverter" />
     </ListView.Resources>
 
@@ -58,8 +59,7 @@
                         Padding="15,10,0,10"
                         BackgroundColor="#F1F1F1"
                         Orientation="Horizontal">
-                        <Label FontAttributes="Bold" Text="Position" />
-                        <Label FontAttributes="Bold" Text="{Binding Name}" />
+                        <Label FontAttributes="Bold" Text="{Binding Name, Converter={StaticResource StopPointNameConverter}}" />
                     </StackLayout>
                     <controls:ItemsControl Margin="15,10,0,10" ItemsSource="{Binding}">
                         <controls:ItemsControl.ItemTemplate>
@@ -83,11 +83,11 @@
                                                 WidthRequest="180" />
                                         </StackLayout>
                                         <StackLayout
-                                            Margin="0,5,0,0"
                                             HorizontalOptions="End"
-                                            IsEnabled="False"
                                             Orientation="Horizontal">
-                                            <Label HorizontalOptions="End" Text="{Binding Time, Converter={StaticResource HumanizeTimeConverter}}" />
+                                            <Label HorizontalOptions="End"
+                                                   Margin="0,5,0,0"
+                                                   Text="{Binding Time, Converter={StaticResource HumanizeTimeConverter}}" />
                                         </StackLayout>
                                     </Grid>
                                     <!--<Grid BackgroundColor="#ec9a00">
