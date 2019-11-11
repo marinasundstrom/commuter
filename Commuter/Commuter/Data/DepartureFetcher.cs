@@ -91,7 +91,14 @@ namespace Commuter.Data
         {
             if(int.TryParse(departure.Name, out var value))
             {
+                //Stadsbuss
                 return value;
+            }
+
+            if(departure.LineTypeId == 2)
+            {
+                // SkåneExpressen
+                return int.Parse(departure.Name.Split(' ').Last());
             }
 
             return departure.LineTypeId == 32 || departure.LineTypeId == 128 ? departure.TrainNo : departure.No;
