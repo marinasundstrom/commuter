@@ -69,7 +69,6 @@
                                         <StackLayout Orientation="Horizontal">
                                             <StackLayout>
                                                 <Label
-                                                WidthRequest="40"
                                                 Padding="5"
                                                 HorizontalTextAlignment="Center"
                                                 Text="{Binding No}"

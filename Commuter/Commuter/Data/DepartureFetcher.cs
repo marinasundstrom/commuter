@@ -79,12 +79,22 @@ namespace Commuter.Data
             return new Departure()
             {
                 RunNo = departure.RunNo,
-                Line = departure.No,
+                No = GetLineNo(departure),
                 Name = departure.Name,
                 Towards = departure.Towards,
                 LineType = departure.LineTypeName,
                 DepartureTime = departure.JourneyDateTime
             };
+        }
+
+        private static int GetLineNo(GetDepartureArrivalResponseGetDepartureArrivalResultLine departure)
+        {
+            if(int.TryParse(departure.Name, out var value))
+            {
+                return value;
+            }
+
+            return departure.LineTypeId == 32 || departure.LineTypeId == 128 ? departure.TrainNo : departure.No;
         }
     }
 }

@@ -143,7 +143,7 @@ namespace Commuter.Models
         private static void SetDepartureProperties(Data.Departure fetchedDeparture, Departure departure)
         {
             departure.LineType = fetchedDeparture.LineType;
-            departure.Line = fetchedDeparture.Line;
+            departure.No = fetchedDeparture.No;
             departure.Name = fetchedDeparture.Name;
             departure.Towards = fetchedDeparture.Towards;
             departure.Time = fetchedDeparture.DepartureTime;

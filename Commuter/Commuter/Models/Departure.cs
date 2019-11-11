@@ -5,7 +5,7 @@ namespace Commuter.Models
     public class Departure : ObservableObject
     {
         private DateTime time;
-        private int line;
+        private int no;
         private string? name;
         private string? towards;
         private int id;
@@ -14,7 +14,7 @@ namespace Commuter.Models
 
         public int RunNo { get => id; set => SetProperty(ref id, value); }
         public string? LineType { get => lineType; set => SetProperty(ref lineType, value); }
-        public int Line { get => line; set => SetProperty(ref line, value); }
+        public int No { get => no; set => SetProperty(ref no, value); }
         public string? StopPoint { get => stopPoint; set => SetProperty(ref stopPoint, value); }
 
         public string? Name
