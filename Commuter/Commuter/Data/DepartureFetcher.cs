@@ -31,7 +31,12 @@ namespace Commuter.Data
             {
                 foreach (var departure in emptyStopPointGroup)
                 {
-                    var stopPointName = departure?.RealTime?.RealTimeInfo?.NewDepPoint?.Trim() ?? "Unspecified";
+                    var stopPointName = departure?.RealTime?.RealTimeInfo?.NewDepPoint?.Trim();
+                    if(stopPointName == null)
+                    {
+                        // INFO: Ignore departures without a StopPoint (Position or Track)
+                        continue;
+                    }
                     var stopPoint = stopPoints.FirstOrDefault(x => x.Name == stopPointName);
                     if (stopPoint == null)
                     {
