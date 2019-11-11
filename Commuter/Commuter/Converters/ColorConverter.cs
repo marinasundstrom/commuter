@@ -14,10 +14,10 @@ namespace Commuter.Converters
                 switch (dep.LineType)
                 {
                     case "Regionbuss":
-                        return "#ed9b02";
+                        return "#fccd1a";
 
-                    case "Skåne Expressen":
-                        return "#f5a101";
+                    case "SkåneExpressen":
+                        return "#fbcd17";
 
                     case "Stadsbuss":
                         return "#509d2f";
