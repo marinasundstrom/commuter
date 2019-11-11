@@ -1,6 +1,6 @@
 ﻿
 using Foundation;
-
+using ObjCRuntime;
 using UIKit;
 
 namespace Commuter.iOS
@@ -24,6 +24,11 @@ namespace Commuter.iOS
             LoadApplication(Startup.Init());
 
             return base.FinishedLaunching(app, options);
+        }
+
+        public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations(UIApplication application, [Transient] UIWindow forWindow)
+        {
+            return UIInterfaceOrientationMask.Portrait;
         }
     }
 }
