@@ -6,11 +6,19 @@
     xmlns:controls="clr-namespace:Commuter.Controls"
     xmlns:d="http://xamarin.com/schemas/2014/forms/design"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:Commuter.Converters"
     mc:Ignorable="d">
 
-    <controls:StopAreaList
-        IsRefreshing="{Binding IsRefreshing}"
-        ItemsSource="{Binding DepartureBoard}"
-        RefreshCommand="{Binding RefreshCommand}" />
+    <ContentPage.Resources>
+        <converters:DataSourceConverter x:Key="DataSourceConverter"></converters:DataSourceConverter>
+    </ContentPage.Resources>
+
+    <Grid>
+        <controls:StopAreaList
+            IsRefreshing="{Binding IsRefreshing}"
+            ItemsSource="{Binding DepartureBoard}"
+            RefreshCommand="{Binding RefreshCommand}" />
+        <Label IsVisible="{Binding DepartureBoard.Count, Converter={StaticResource DataSourceConverter}}" HorizontalOptions="Center" VerticalOptions="Center" Text="No stops nearby"></Label>
+    </Grid>
 
 </ContentPage>

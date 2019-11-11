@@ -17,7 +17,7 @@ namespace Commuter.Data
         public async Task<IEnumerable<StopArea>> GetNearestStopAreasAsync(double longitude, double latitude, int radius, CancellationToken cancellationToken = default)
         {
             var stopAreas = await client.GetNearestStopAreasAsync(longitude, latitude, radius, cancellationToken);
-            return stopAreas.Select(x => new StopArea
+            return stopAreas?.Select(x => new StopArea
             {
                 StopAreaId = (int)x.Id,
                 Name = x.Name,

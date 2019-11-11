@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
@@ -50,6 +51,10 @@ namespace Commuter.Models
 
                 departureBoardPeriodicUpdater.Start();
             }
+            catch (HttpRequestException exception)
+            {
+                await HandleRequestException(exception);
+            }
             catch (Exception exception)
             {
                 await HandleException(exception);
@@ -80,12 +85,13 @@ namespace Commuter.Models
         {
             try
             {
-                //if (lastFetch.AddSeconds(10) > lastFetch)
-                //{
                 await DepartureBoard.UpdateAsync(data);
 
                 lastFetch = DateTime.Now;
-                //}
+            }
+            catch (HttpRequestException exception)
+            {
+                await HandleRequestException(exception);
             }
             catch (Exception exception)
             {
@@ -103,6 +109,10 @@ namespace Commuter.Models
 
                 lastFetch = DateTime.Now;
             }
+            catch (HttpRequestException exception)
+            {
+                await HandleRequestException(exception);
+            }
             catch (Exception exception)
             {
                 await HandleException(exception);
@@ -110,6 +120,16 @@ namespace Commuter.Models
 
             IsRefreshing = false;
         }));
+
+        private async Task HandleRequestException(HttpRequestException exception)
+        {
+            logger.LogError(exception, "Something went wrong");
+
+            await Device.InvokeOnMainThreadAsync(async () =>
+            {
+                await Alert.Display("No connection", "Please try again later.", "OK");
+            });
+        }
 
         private async Task HandleException(Exception exception)
         {
