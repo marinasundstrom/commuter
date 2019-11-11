@@ -98,9 +98,12 @@ namespace Commuter.Models
 
         private void SortDeparturesByDepartureTime(StopArea stopArea, StopPoint stopPoint)
         {
-            stopPoint.SortBy(x => x.Time);
+            if (!stopPoint.OrderBy(x => x.Time).SequenceEqual(stopPoint))
+            {
+                stopPoint.SortBy(x => x.Time);
 
-            logger.LogDebug($"Sorted Departures at StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
+                logger.LogDebug($"Sorted Departures at StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
+            }
         }
 
         private void UpdateDepartures(StopArea stopArea, Data.StopPoint fetchedStopPoint, StopPoint stopPoint)
@@ -110,6 +113,13 @@ namespace Commuter.Models
                 var departure = stopPoint.FirstOrDefault(x => x.RunNo == fetchedDeparture.RunNo);
                 if (departure == null)
                 {
+                    // INFO: Make sure we don't add back a deleted Departure.
+
+                    if(IsOverdue(fetchedDeparture.DepartureTime))
+                    {
+                        continue;
+                    }
+
                     departure = new Departure
                     {
                         RunNo = fetchedDeparture.RunNo
@@ -145,12 +155,18 @@ namespace Commuter.Models
         }
 
         private void CleanUpDepartures(StopArea stopArea, StopPoint stopPoint)
-        {
-            foreach (var departure in stopPoint.Where(x => DateTime.Now.Truncate(TimeSpan.FromSeconds(1)) > x.Time).ToArray())
+        {      
+            foreach (var departure in stopPoint.Where(d => IsOverdue(d.Time)).ToArray())
             {
-                logger.LogDebug($"Removed Departure {departure.Name} {departure.Towards} with {departure.RunNo} from StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
                 stopPoint.Remove(departure);
+                logger.LogDebug($"Removed Departure {departure.Name} {departure.Towards} with {departure.RunNo} from StopPoint {stopPoint.Name} in StopArea {stopArea.Name}");
             }
+        }
+
+        private static bool IsOverdue(DateTime time)
+        {
+            var now = DateTime.Now.Truncate(TimeSpan.FromSeconds(1));
+            return now > time.AddMinutes(1);
         }
 
         private void UpdateStopAreas(IEnumerable<IStopArea> fetchedStopAreas)
@@ -185,9 +201,12 @@ namespace Commuter.Models
 
         private void SortStopAreasByDistance()
         {
-            this.SortBy(x => x.Distance);
+            if (!this.OrderBy(x => x.Distance).SequenceEqual(this))
+            {
+                this.SortBy(x => x.Distance);
 
-            logger.LogDebug($"¨Sorted StopAreas");
+                logger.LogDebug($"¨Sorted StopAreas");
+            }
         }
 
         private void CleanUpStopAreas(IEnumerable<IStopArea> fetchedStopAreas)
