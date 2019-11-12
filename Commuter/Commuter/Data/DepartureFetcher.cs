@@ -76,15 +76,31 @@ namespace Commuter.Data
 
         private static Departure CreateDeparture(GetDepartureArrivalResponseGetDepartureArrivalResultLine departure)
         {
-            return new Departure()
+            var d = new Departure()
             {
                 RunNo = departure.RunNo,
                 No = GetLineNo(departure),
                 Name = departure.Name,
                 Towards = departure.Towards,
                 LineType = departure.LineTypeName,
-                DepartureTime = departure.JourneyDateTime
+                DepartureTime = departure.JourneyDateTime,
             };
+
+            var deviations = new List<Deviation>();
+            foreach(var deviation in departure.Deviations)
+            {
+                deviations.Add(new Deviation()
+                {
+                    Header = deviation.Header,
+                    ShortText = deviation.Details,
+                    Importance = deviation.Importance,
+                    Urgency = deviation.Urgency,
+                    Influence = deviation.Influence
+                });
+            }
+            d.Deviations = deviations;
+
+            return d;
         }
 
         private static int GetLineNo(GetDepartureArrivalResponseGetDepartureArrivalResultLine departure)

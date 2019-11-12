@@ -101,18 +101,18 @@ namespace Skanetrafiken.API.NearestStopArea
     public partial class GetNearestStopAreaResponseGetNearestStopAreaResultNearestStopArea
     {
 
-        private uint idField;
+        private int idField;
 
         private string nameField;
 
-        private uint xField;
+        private int xField;
 
-        private uint yField;
+        private int yField;
 
         private ushort distanceField;
 
         /// <remarks/>
-        public uint Id
+        public int Id
         {
             get => idField;
             set => idField = value;
@@ -126,14 +126,14 @@ namespace Skanetrafiken.API.NearestStopArea
         }
 
         /// <remarks/>
-        public uint X
+        public int X
         {
             get => xField;
             set => xField = value;
         }
 
         /// <remarks/>
-        public uint Y
+        public int Y
         {
             get => yField;
             set => yField = value;

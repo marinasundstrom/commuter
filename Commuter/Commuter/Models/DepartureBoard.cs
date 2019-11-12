@@ -84,13 +84,18 @@ namespace Commuter.Models
                     {
                         Name = fetchedStopPoint.Name
                     };
+
+                    UpdateDepartures(stopArea, fetchedStopPoint, stopPoint);
+
                     stopArea.Add(stopPoint);
                     logger.LogDebug($"Added StopPoint {stopPoint.Name} to StopArea {stopArea.Name}");
                 }
+                else
+                {
+                    CleanUpDepartures(stopArea, stopPoint);
 
-                CleanUpDepartures(stopArea, stopPoint);
-
-                UpdateDepartures(stopArea, fetchedStopPoint, stopPoint);
+                    UpdateDepartures(stopArea, fetchedStopPoint, stopPoint);
+                }
 
                 SortDeparturesByDepartureTime(stopArea, stopPoint);
             }
@@ -140,13 +145,42 @@ namespace Commuter.Models
             }
         }
 
-        private static void SetDepartureProperties(Data.Departure fetchedDeparture, Departure departure)
+        private void SetDepartureProperties(Data.Departure fetchedDeparture, Departure departure)
         {
             departure.LineType = fetchedDeparture.LineType;
             departure.No = fetchedDeparture.No;
             departure.Name = fetchedDeparture.Name;
             departure.Towards = fetchedDeparture.Towards;
             departure.Time = fetchedDeparture.DepartureTime;
+
+            UpdateDeviations(fetchedDeparture, departure);
+        }
+
+        private void UpdateDeviations(Data.Departure fetchedDeparture, Departure departure)
+        {
+            foreach (var deviation in departure.Deviations.ToArray())
+            {
+                if (!fetchedDeparture.Deviations.Any(d => d.Header == deviation.Header && d.Urgency == deviation.Urgency && d.Importance == deviation.Importance && d.Influence == deviation.Influence))
+                {
+                    departure.Deviations.Remove(deviation);
+                    logger.LogDebug($"Removed Deviation from Departure {departure.Name} {departure.Name} {departure.Towards} with {departure.RunNo}");
+                }
+            }
+
+            foreach (var deviation in fetchedDeparture?.Deviations)
+            {
+                if (!departure.Deviations.Any(d => d.Header == deviation.Header && d.Urgency == deviation.Urgency && d.Importance == deviation.Importance && d.Influence == deviation.Influence))
+                {
+                    departure.Deviations.Add(new Deviation()
+                    {
+                        Header = deviation.Header,
+                        ShortText = deviation.ShortText,
+                        Importance = deviation.Importance,
+                        Urgency = deviation.Urgency,
+                        Influence = deviation.Influence
+                    });
+                }
+            }
         }
 
         private static int GetDepartureCacheLimit()

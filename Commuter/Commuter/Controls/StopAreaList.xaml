@@ -3,6 +3,7 @@
     x:Class="Commuter.Controls.StopAreaList"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:local="clr-namespace:Commuter"
     xmlns:controls="clr-namespace:Commuter.Controls"
     xmlns:converters="clr-namespace:Commuter.Converters"
     xmlns:d="http://xamarin.com/schemas/2014/forms/design"
@@ -15,12 +16,19 @@
     mc:Ignorable="d">
 
     <ListView.Resources>
-        <converters:TimeConverter x:Key="TimeConverter" />
         <converters:DistanceConverter x:Key="DistanceConverter" />
-        <converters:ColorConverter x:Key="ColorConverter" />
         <converters:StopPointNameConverter x:Key="StopPointNameConverter" />
-        <converters:FontColorConverter x:Key="FontColorConverter" />
-        <converters:SignWidthConverter x:Key="SignWidthConverter" />
+
+        <DataTemplate x:Key="evenTemplate">
+            <controls:DepartureView Margin="-5,-6,-5,-5"></controls:DepartureView>
+        </DataTemplate>
+        <DataTemplate x:Key="unevenTemplate">
+            <controls:DepartureView Margin="-5,-6,-5,-5" BackgroundColor="#ECECEC"></controls:DepartureView>
+        </DataTemplate>
+
+        <local:AlternateColorDataTemplateSelector x:Key="AlternateColorDataTemplateSelector"
+                EvenTemplate="{StaticResource evenTemplate}"
+                UnevenTemplate="{StaticResource unevenTemplate}" />
     </ListView.Resources>
 
 
@@ -57,52 +65,16 @@
             <ViewCell>
                 <StackLayout>
                     <StackLayout
+                        x:Name="StopPointNameLabel"
                         Padding="15,10,0,10"
-                        BackgroundColor="#F1F1F1"
+                        BackgroundColor="#F6F6F6"
                         Orientation="Horizontal">
                         <Label FontAttributes="Bold" Text="{Binding Name, Converter={StaticResource StopPointNameConverter}}" />
                     </StackLayout>
-                    <controls:ItemsControl Margin="15,10,0,10" ItemsSource="{Binding}">
-                        <controls:ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackLayout Margin="0,5,15,5">
-                                    <Grid>
-                                        <StackLayout Orientation="Horizontal">
-                                            <StackLayout>
-                                                <Grid BackgroundColor="{Binding Converter={StaticResource ColorConverter}}"
-                                                      WidthRequest="{Binding No, Converter={StaticResource SignWidthConverter}}" HorizontalOptions="Start"
-                                                    Padding="5">
-                                                  <Label
-                                                      TextColor="{Binding Converter={StaticResource FontColorConverter}}"
-                                                      HorizontalTextAlignment="Center" HorizontalOptions="Center"
-                                                      Text="{Binding No}"
-                                                   />
-                                                </Grid>
-                                            </StackLayout>
-                                            <Label
-                                                Margin="0,5,0,0"
-                                                LineBreakMode="WordWrap"
-                                                Text="{Binding Towards}"
-                                                WidthRequest="200" />
-                                        </StackLayout>
-                                        <StackLayout
-                                            HorizontalOptions="End"
-                                            Orientation="Horizontal">
-                                            <Label HorizontalOptions="End"
-                                                   Margin="0,5,0,0"
-                                                   Text="{Binding Time, Converter={StaticResource TimeConverter}}" />
-                                        </StackLayout>
-                                    </Grid>
-                                    <!--<Grid BackgroundColor="#ec9a00">
-                                        <Label
-                                            Margin="10"
-                                            FontSize="Small"
-                                            Text="Stadsbussen Malmö linje 4. Förseningar kan förekomma pga vägarbete från depån." />
-                                    </Grid>-->
-                                </StackLayout>
-
-                            </DataTemplate>
-                        </controls:ItemsControl.ItemTemplate>
+                    <controls:ItemsControl
+                        x:Name="DeparturesItemsControl"
+                        ItemsSource="{Binding}"
+                        ItemTemplate="{StaticResource AlternateColorDataTemplateSelector}">
                     </controls:ItemsControl>
                 </StackLayout>
             </ViewCell>

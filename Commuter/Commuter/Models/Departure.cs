@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 
 namespace Commuter.Models
 {
@@ -37,5 +38,7 @@ namespace Commuter.Models
                 OnPropertyChanged(nameof(Time));
             }
         }
+
+        public ObservableCollection<Deviation> Deviations { get; } = new ObservableCollection<Deviation>();
     }
 }

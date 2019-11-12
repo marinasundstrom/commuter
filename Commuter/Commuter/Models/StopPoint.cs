@@ -22,7 +22,6 @@ namespace Commuter.Models
             OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
 
             return true;
-
         }
     }
 }

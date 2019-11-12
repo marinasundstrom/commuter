@@ -65,7 +65,7 @@ namespace Skanetrafiken.API.DepartureArrival
     public partial class GetDepartureArrivalResponseGetDepartureArrivalResult
     {
 
-        private byte codeField;
+        private int codeField;
 
         private object messageField;
 
@@ -74,7 +74,7 @@ namespace Skanetrafiken.API.DepartureArrival
         private GetDepartureArrivalResponseGetDepartureArrivalResultStopAreaData stopAreaDataField;
 
         /// <remarks/>
-        public byte Code
+        public int Code
         {
             get => codeField;
             set => codeField = value;
@@ -120,7 +120,7 @@ namespace Skanetrafiken.API.DepartureArrival
 
         private string stopPointField;
 
-        private byte lineTypeIdField;
+        private int lineTypeIdField;
 
         private string lineTypeNameField;
 
@@ -132,7 +132,7 @@ namespace Skanetrafiken.API.DepartureArrival
 
         private ushort trainNoField;
 
-        private GetDepartureArrivalResponseGetDepartureArrivalResultLineDeviations deviationsField;
+        private GetDepartureArrivalResponseGetDepartureArrivalResultLineDeviationsDeviation[] deviationsField;
 
         private ushort runNoField;
 
@@ -172,7 +172,7 @@ namespace Skanetrafiken.API.DepartureArrival
         }
 
         /// <remarks/>
-        public byte LineTypeId
+        public int LineTypeId
         {
             get => lineTypeIdField;
             set => lineTypeIdField = value;
@@ -214,7 +214,8 @@ namespace Skanetrafiken.API.DepartureArrival
         }
 
         /// <remarks/>
-        public GetDepartureArrivalResponseGetDepartureArrivalResultLineDeviations Deviations
+        [System.Xml.Serialization.XmlArrayItemAttribute("Deviation", IsNullable = false)]
+        public GetDepartureArrivalResponseGetDepartureArrivalResultLineDeviationsDeviation[] Deviations
         {
             get => deviationsField;
             set => deviationsField = value;
@@ -297,7 +298,7 @@ namespace Skanetrafiken.API.DepartureArrival
 
         private string newDepPointField;
 
-        private sbyte depTimeDeviationField;
+        private int depTimeDeviationField;
 
         private string depDeviationAffectField;
 
@@ -309,7 +310,7 @@ namespace Skanetrafiken.API.DepartureArrival
         }
 
         /// <remarks/>
-        public sbyte DepTimeDeviation
+        public int DepTimeDeviation
         {
             get => depTimeDeviationField;
             set => depTimeDeviationField = value;
@@ -320,23 +321,6 @@ namespace Skanetrafiken.API.DepartureArrival
         {
             get => depDeviationAffectField;
             set => depDeviationAffectField = value;
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.etis.fskab.se/v1.0/ETISws")]
-    public partial class GetDepartureArrivalResponseGetDepartureArrivalResultLineDeviations
-    {
-
-        private GetDepartureArrivalResponseGetDepartureArrivalResultLineDeviationsDeviation deviationField;
-
-        /// <remarks/>
-        public GetDepartureArrivalResponseGetDepartureArrivalResultLineDeviationsDeviation Deviation
-        {
-            get => deviationField;
-            set => deviationField = value;
         }
     }
 
@@ -359,11 +343,11 @@ namespace Skanetrafiken.API.DepartureArrival
 
         private string shortTextField;
 
-        private byte importanceField;
+        private int importanceField;
 
-        private byte influenceField;
+        private int influenceField;
 
-        private byte urgencyField;
+        private int urgencyField;
 
         private object webLinksField;
 
@@ -410,21 +394,21 @@ namespace Skanetrafiken.API.DepartureArrival
         }
 
         /// <remarks/>
-        public byte Importance
+        public int Importance
         {
             get => importanceField;
             set => importanceField = value;
         }
 
         /// <remarks/>
-        public byte Influence
+        public int Influence
         {
             get => influenceField;
             set => influenceField = value;
         }
 
         /// <remarks/>
-        public byte Urgency
+        public int Urgency
         {
             get => urgencyField;
             set => urgencyField = value;

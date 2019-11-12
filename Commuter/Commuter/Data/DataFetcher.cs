@@ -81,9 +81,9 @@ namespace Commuter.Data
                 //return await Task.FromResult(new Location(55.481801, 13.446703));
                 //return await Task.FromResult(new Location(55.690828, 13.1889643));
                 //return await Task.FromResult(new Location(55.6095294, 13.042444)); 
-                return await Task.FromResult(new Location(55.707919, 13.186684));
+                //return await Task.FromResult(new Location(55.707919, 13.186684));
                 //return await Task.FromResult(new Location(55.608975, 12.9985393)); // Malmö C
-                //return await Task.FromResult(new Location(55.605618, 13.0206813)); // Värnhemstorget
+                return await Task.FromResult(new Location(55.605618, 13.0206813)); // Värnhemstorget
                 //return await Task.FromResult(new Location(55.480216, 13.499789)); // Skurup
             }
             else

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Commuter.Data
 {
@@ -11,5 +12,6 @@ namespace Commuter.Data
         public string? Name { get; set; }
         public string? Towards { get; set; }
         public DateTime DepartureTime { get; set; }
+        public IEnumerable<Deviation>? Deviations { get; set; }
     }
 }

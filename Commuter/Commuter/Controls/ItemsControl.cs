@@ -136,7 +136,7 @@ namespace Commuter.Controls
         /// </summary>
         public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(
             nameof(ItemsSource), typeof(IList), typeof(ItemsControl),
-            propertyChanging: (bindable, oldValue, newValue) => ((ItemsControl)bindable).OnItemsSourceChanged((IList)oldValue, (IList)newValue));
+            propertyChanged: (bindable, oldValue, newValue) => ((ItemsControl)bindable).OnItemsSourceChanged((IList)oldValue, (IList)newValue));
 
         /// <summary>
         /// Gets or sets the items source - can be any collection of elements.
