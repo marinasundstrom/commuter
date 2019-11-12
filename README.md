@@ -35,7 +35,7 @@ Android:
 
 iOS:
 
-<img src="Screenshots/ios.png" alt="On iOS" width="300">
+<img src="Screenshots/ios.jpg" alt="On iOS" width="300">
 
 ## Futures
 * Stabilization
