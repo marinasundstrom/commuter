@@ -39,10 +39,10 @@
             </Grid>
         </StackLayout>
 
-        <controls:ItemsControl ItemsSource="{Binding Deviations}" Margin="-5,0,0,0">
+        <controls:ItemsControl ItemsSource="{Binding Deviations}" Margin="-5,0,-5,0">
             <controls:ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackLayout BackgroundColor="#FFB22B">
+                    <StackLayout BackgroundColor="#FFCE6C">
                         <Label x:Name="DeviationText"
                                             Margin="10,10,10,10"
                                             FontSize="Small"
