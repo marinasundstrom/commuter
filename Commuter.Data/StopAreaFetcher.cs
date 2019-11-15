@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Commuter.Data
 {
-    internal class StopAreaFetcher : IStopAreaFetcher
+    public class StopAreaFetcher : IStopAreaFetcher
     {
         private readonly OpenApiClient client;
 

@@ -30,6 +30,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Skanetrafiken.API\Skanetrafiken.API.csproj" />
+    <ProjectReference Include="..\..\Commuter.Data\Commuter.Data.csproj" />
+    <ProjectReference Include="..\..\Commuter.Core\Commuter.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,9 +6,10 @@ namespace Commuter.Services
 {
     internal class GeoLocationService : IGeoLocationService
     {
-        public Task<Location> GetLocationAsync()
+        public async Task<Location> GetLocationAsync()
         {
-            return Geolocation.GetLocationAsync();
+            var location = await Geolocation.GetLocationAsync();
+            return new Location(location.Latitude, location.Longitude, location.Altitude);
         }
     }
 }

@@ -9,8 +9,6 @@ using Commuter.Services;
 
 using Microsoft.Extensions.Logging;
 
-using Xamarin.Essentials;
-
 namespace Commuter.Data
 {
     public class DataFetcher : IDataFetcher
