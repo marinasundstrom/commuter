@@ -12,6 +12,7 @@ namespace Commuter.Models
         private int id;
         private string? stopPoint;
         private string? lineType;
+        private DateTime? newTime;
 
         public int RunNo { get => id; set => SetProperty(ref id, value); }
         public string? LineType { get => lineType; set => SetProperty(ref lineType, value); }
@@ -38,6 +39,19 @@ namespace Commuter.Models
                 OnPropertyChanged(nameof(Time));
             }
         }
+
+        public DateTime? NewTime
+        {
+            get => newTime;
+            set
+            {
+                newTime = value;
+                OnPropertyChanged(nameof(NewTime));
+                OnPropertyChanged(nameof(HasNewTime));
+            }
+        }
+
+        public bool HasNewTime => NewTime != null;
 
         public ObservableCollection<Deviation> Deviations { get; } = new ObservableCollection<Deviation>();
     }

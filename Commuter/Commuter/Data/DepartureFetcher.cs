@@ -86,6 +86,13 @@ namespace Commuter.Data
                 DepartureTime = departure.JourneyDateTime,
             };
 
+            d.DepartureTimeDeviation = departure?.RealTime?.RealTimeInfo?.DepTimeDeviation ?? null;
+
+            if(d.DepartureTimeDeviation == 0)
+            {
+                d.DepartureTimeDeviation = null;
+            }
+
             var deviations = new List<Deviation>();
             foreach(var deviation in departure.Deviations)
             {

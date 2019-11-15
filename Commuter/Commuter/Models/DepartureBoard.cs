@@ -152,6 +152,23 @@ namespace Commuter.Models
             departure.Name = fetchedDeparture.Name;
             departure.Towards = fetchedDeparture.Towards;
             departure.Time = fetchedDeparture.DepartureTime;
+            if (fetchedDeparture.DepartureTimeDeviation != null)
+            {
+                var newTime = fetchedDeparture.DepartureTime.AddMinutes(fetchedDeparture.DepartureTimeDeviation ?? 0);
+
+                if(newTime.Truncate(TimeSpan.FromMinutes(1)) > fetchedDeparture.DepartureTime.Truncate(TimeSpan.FromMinutes(1)))
+                {
+                    departure.NewTime = newTime;
+                }
+                else
+                {
+                    departure.NewTime = null;
+                }
+            }
+            else
+            {
+                departure.NewTime = null;
+            }
 
             UpdateDeviations(fetchedDeparture, departure);
         }

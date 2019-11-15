@@ -6,6 +6,7 @@
         <converters:StopPointNameConverter x:Key="StopPointNameConverter" />
         <converters:FontColorConverter x:Key="FontColorConverter" />
         <converters:SignWidthConverter x:Key="SignWidthConverter" />
+        <converters:StrikeOldTimeConverter x:Key="StrikeOldTimeConverter" />
     </ContentView.Resources>
 
     <StackLayout Padding="15,15,15,5">
@@ -32,9 +33,13 @@
                 <StackLayout
                                             HorizontalOptions="End"
                                             Orientation="Horizontal">
-                    <Label HorizontalOptions="End" x:Name="TimeLabel"
+                    <StackLayout>
+                        <Label HorizontalOptions="End" x:Name="TimeLabel"
                                                    Margin="0,5,0,0"
-                                                   Text="{Binding Time, Converter={StaticResource TimeConverter}}" />
+                                                   Text="{Binding ., Converter={StaticResource TimeConverter}}"
+                                                   TextDecorations="{Binding ., Converter={StaticResource StrikeOldTimeConverter}}"
+                        />
+                    </StackLayout>
                 </StackLayout>
             </Grid>
         </StackLayout>
