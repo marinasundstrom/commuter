@@ -76,6 +76,7 @@ namespace Commuter
                 .AddTransient<IDeviationViewModelFactory, DeviationViewModelFactory>();
 
             services
+                .AddSingleton<IAlertService, AlertService>()
                 .AddSingleton<IThreadDispatcher, ThreadDispatcher>();
 
             services

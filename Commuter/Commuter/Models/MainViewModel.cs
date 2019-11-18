@@ -17,6 +17,8 @@ namespace Commuter.Models
     public class MainViewModel : ObservableObject, IDisposable
     {
         private Command? refreshCommand;
+        private readonly IThreadDispatcher threadDispatcher;
+        private readonly IAlertService alertService;
         private readonly IDataFetcher dataFetcher;
         private readonly IDepartureBoardPeriodicUpdater departureBoardPeriodicUpdater;
         private readonly ILogger<MainViewModel> logger;
@@ -26,11 +28,15 @@ namespace Commuter.Models
         private CancellationTokenSource? cts;
 
         public MainViewModel(
+            IThreadDispatcher threadDispatcher,
+            IAlertService alertService,
             IDepartureBoard departureBoardViewModel,
             IDataFetcher dataFetcher,
             IDepartureBoardPeriodicUpdater departureBoardPeriodicUpdater,
             ILogger<MainViewModel> logger)
         {
+            this.threadDispatcher = threadDispatcher;
+            this.alertService = alertService;
             DepartureBoard = departureBoardViewModel;
             this.dataFetcher = dataFetcher;
             this.departureBoardPeriodicUpdater = departureBoardPeriodicUpdater;
@@ -133,9 +139,9 @@ namespace Commuter.Models
         {
             logger.LogError(exception, "Something went wrong");
 
-            await Device.InvokeOnMainThreadAsync(async () =>
+            await threadDispatcher.InvokeOnMainThreadAsync(async () =>
             {
-                await Alert.Display("No connection", "Please try again later.", "OK");
+                await alertService.DisplayAlert("No connection", "Please try again later.", "OK");
             });
         }
 
@@ -143,9 +149,9 @@ namespace Commuter.Models
         {
             logger.LogError(exception, "Something went wrong");
 
-            await Device.InvokeOnMainThreadAsync(async () =>
+            await threadDispatcher.InvokeOnMainThreadAsync(async () =>
             {
-                await Alert.Display("Error", "Failed to update the departure board.", "OK");
+                await alertService.DisplayAlert("Error", "Failed to update the departure board.", "OK");
             });
         }
 

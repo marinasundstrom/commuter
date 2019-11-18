@@ -2,14 +2,14 @@
 
 namespace Commuter
 {
-    public static class Alert
+    public sealed class AlertService : IAlertService
     {
-        public static Task Display(string title, string message, string cancel)
+        public Task DisplayAlert(string title, string message, string cancel)
         {
             return App.Current.MainPage.DisplayAlert(title, message, cancel);
         }
 
-        public static Task DisplayAlert(string title, string message, string accept, string cancel)
+        public Task DisplayAlert(string title, string message, string accept, string cancel)
         {
             return App.Current.MainPage.DisplayAlert(title, message, accept, cancel);
         }

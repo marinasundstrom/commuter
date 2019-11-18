@@ -3,10 +3,10 @@
     x:Class="Commuter.Controls.StopAreaList"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-        xmlns:local="clr-namespace:Commuter"
     xmlns:controls="clr-namespace:Commuter.Controls"
     xmlns:converters="clr-namespace:Commuter.Converters"
     xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:local="clr-namespace:Commuter"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     HasUnevenRows="true"
     IsGroupingEnabled="true"
@@ -20,15 +20,16 @@
         <converters:StopPointNameConverter x:Key="StopPointNameConverter" />
 
         <DataTemplate x:Key="evenTemplate">
-            <controls:DepartureView Margin="-5,-6,-5,-5"></controls:DepartureView>
+            <controls:DepartureView Margin="-5,-6,-5,-5" />
         </DataTemplate>
         <DataTemplate x:Key="unevenTemplate">
-            <controls:DepartureView Margin="-5,-6,-5,-5" BackgroundColor="#ECECEC"></controls:DepartureView>
+            <controls:DepartureView Margin="-5,-6,-5,-5" BackgroundColor="#ECECEC" />
         </DataTemplate>
 
-        <local:AlternateColorDataTemplateSelector x:Key="AlternateColorDataTemplateSelector"
-                EvenTemplate="{StaticResource evenTemplate}"
-                UnevenTemplate="{StaticResource unevenTemplate}" />
+        <local:AlternateColorDataTemplateSelector
+            x:Key="AlternateColorDataTemplateSelector"
+            EvenTemplate="{StaticResource evenTemplate}"
+            UnevenTemplate="{StaticResource unevenTemplate}" />
     </ListView.Resources>
 
 
@@ -73,9 +74,8 @@
                     </StackLayout>
                     <controls:ItemsControl
                         x:Name="DeparturesItemsControl"
-                        ItemsSource="{Binding}"
-                        ItemTemplate="{StaticResource AlternateColorDataTemplateSelector}">
-                    </controls:ItemsControl>
+                        ItemTemplate="{StaticResource AlternateColorDataTemplateSelector}"
+                        ItemsSource="{Binding}" />
                 </StackLayout>
             </ViewCell>
         </DataTemplate>
