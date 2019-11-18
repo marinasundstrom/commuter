@@ -1,6 +1,6 @@
 ﻿namespace Commuter.Models
 {
-    public class Deviation : ObservableObject
+    public class DeviationViewModel : ObservableObject
     {
         private string? shortText;
         private string? header;

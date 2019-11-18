@@ -4,7 +4,7 @@ using Xamarin.Essentials;
 
 namespace Commuter.Services
 {
-    internal class GeoLocationService : IGeoLocationService
+    internal sealed class GeoLocationFactory : IGeoLocationService
     {
         public async Task<Location> GetLocationAsync()
         {

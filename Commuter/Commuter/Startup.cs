@@ -30,7 +30,7 @@ namespace Commuter
                             .ConfigureHostConfiguration(c =>
                             {
                                 c.AddCommandLine(new string[] { $"ContentRoot={FileSystem.AppDataDirectory}" });
-                                c.AddJsonFile(fullConfig);
+                                c.AddJsonFile(fullConfig, optional: true);
                             })
                             .ConfigureServices((c, x) =>
                             {
@@ -68,7 +68,15 @@ namespace Commuter
                 .AddTransient<IDepartureFetcher, DepartureFetcher>()
                 .AddTransient<IDataFetcher, DataFetcher>()
                 .AddTransient<IDepartureBoardPeriodicUpdater, DepartureBoardPeriodicUpdater>()
-                .AddTransient<IGeoLocationService, GeoLocationService>();
+                .AddTransient<IGeoLocationService, GeoLocationFactory>();
+
+            services.AddTransient<IStopAreaViewModelFactory, StopAreaViewModelFactory>()
+                .AddTransient<IStopPointViewModelFactory, StopPointViewModelFactory>()
+                .AddTransient<IDepartureViewModelFactory, DepartureViewModelFactory>()
+                .AddTransient<IDeviationViewModelFactory, DeviationViewModelFactory>();
+
+            services
+                .AddSingleton<IThreadDispatcher, ThreadDispatcher>();
 
             services
               .AddSingleton<MainViewModel>()

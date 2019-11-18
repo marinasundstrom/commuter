@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Commuter.Models
 {
-    public class StopPoint : ObservableCollection<Departure>
+    public class StopPointViewModel : ObservableCollection<DepartureViewModel>
     {
         private string? name;
 

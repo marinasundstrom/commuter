@@ -35,12 +35,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="appsettings.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="Controls\StopAreaList.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="appsettings.json" />
   </ItemGroup>
 </Project>

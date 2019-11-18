@@ -3,21 +3,19 @@ using System.Collections.ObjectModel;
 
 namespace Commuter.Models
 {
-    public class Departure : ObservableObject
+    public class DepartureViewModel : ObservableObject
     {
         private DateTime time;
         private int no;
         private string? name;
         private string? towards;
-        private int id;
-        private string? stopPoint;
+        private int runNo;
         private string? lineType;
         private DateTime? newTime;
 
-        public int RunNo { get => id; set => SetProperty(ref id, value); }
+        public int RunNo { get => runNo; set => SetProperty(ref runNo, value); }
         public string? LineType { get => lineType; set => SetProperty(ref lineType, value); }
         public int No { get => no; set => SetProperty(ref no, value); }
-        public string? StopPoint { get => stopPoint; set => SetProperty(ref stopPoint, value); }
 
         public string? Name
         {
@@ -31,12 +29,16 @@ namespace Commuter.Models
             set => SetProperty(ref towards, value);
         }
 
+        public DateTime ActualTime => HasNewTime ? NewTime.GetValueOrDefault() : Time;
+
         public DateTime Time
         {
             get => time; set
             {
                 time = value;
                 OnPropertyChanged(nameof(Time));
+                OnPropertyChanged(nameof(NewTime));
+                OnPropertyChanged(nameof(ActualTime));
             }
         }
 
@@ -48,11 +50,12 @@ namespace Commuter.Models
                 newTime = value;
                 OnPropertyChanged(nameof(NewTime));
                 OnPropertyChanged(nameof(HasNewTime));
+                OnPropertyChanged(nameof(ActualTime));
             }
         }
 
         public bool HasNewTime => NewTime != null;
 
-        public ObservableCollection<Deviation> Deviations { get; } = new ObservableCollection<Deviation>();
+        public ObservableCollection<DeviationViewModel> Deviations { get; } = new ObservableCollection<DeviationViewModel>();
     }
 }

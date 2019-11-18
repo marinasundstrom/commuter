@@ -32,7 +32,7 @@ namespace Commuter.Data
                 foreach (var departure in emptyStopPointGroup)
                 {
                     var stopPointName = departure?.RealTime?.RealTimeInfo?.NewDepPoint?.Trim();
-                    if(stopPointName == null)
+                    if (stopPointName == null)
                     {
                         // INFO: Ignore departures without a StopPoint (Position or Track)
                         continue;
@@ -88,22 +88,25 @@ namespace Commuter.Data
 
             d.DepartureTimeDeviation = departure?.RealTime?.RealTimeInfo?.DepTimeDeviation ?? null;
 
-            if(d.DepartureTimeDeviation == 0)
+            if (d.DepartureTimeDeviation == 0)
             {
                 d.DepartureTimeDeviation = null;
             }
 
             var deviations = new List<Deviation>();
-            foreach(var deviation in departure.Deviations)
+            if (departure != null)
             {
-                deviations.Add(new Deviation()
+                foreach (var deviation in departure.Deviations)
                 {
-                    Header = deviation.Header,
-                    ShortText = deviation.Details,
-                    Importance = deviation.Importance,
-                    Urgency = deviation.Urgency,
-                    Influence = deviation.Influence
-                });
+                    deviations.Add(new Deviation()
+                    {
+                        Header = deviation.Header,
+                        ShortText = deviation.Details,
+                        Importance = deviation.Importance,
+                        Urgency = deviation.Urgency,
+                        Influence = deviation.Influence
+                    });
+                }
             }
             d.Deviations = deviations;
 
@@ -112,13 +115,13 @@ namespace Commuter.Data
 
         private static int GetLineNo(GetDepartureArrivalResponseGetDepartureArrivalResultLine departure)
         {
-            if(int.TryParse(departure.Name, out var value))
+            if (int.TryParse(departure.Name, out var value))
             {
                 //Stadsbuss
                 return value;
             }
 
-            if(departure.LineTypeId == 2)
+            if (departure.LineTypeId == 2)
             {
                 // SkåneExpressen
                 return int.Parse(departure.Name.Split(' ').Last());

@@ -14,7 +14,7 @@ namespace Commuter
         public static readonly string V2_2 = "2.2";
     }
 
-    public class OpenApiClient : IDisposable
+    public class OpenApiClient : IDisposable, IOpenApiClient
     {
         public HttpClient HttpClient { get; }
 

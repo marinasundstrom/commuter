@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Commuter.Data;
@@ -22,6 +23,7 @@ namespace Commuter.Models
         private bool isRefreshing;
         private DateTime lastFetch;
         private IDisposable? disposable;
+        private CancellationTokenSource? cts;
 
         public MainViewModel(
             IDepartureBoard departureBoardViewModel,
@@ -65,6 +67,9 @@ namespace Commuter.Models
         {
             try
             {
+                cts?.Cancel();
+                cts = null;
+
                 var data = new List<IStopArea>();
                 await foreach (var item in dataFetcher.FetchData())
                 {
@@ -83,9 +88,12 @@ namespace Commuter.Models
 
         private async void Cycle(IEnumerable<IStopArea> data)
         {
+            cts?.Dispose();
+            cts = new CancellationTokenSource();
+
             try
             {
-                await DepartureBoard.UpdateAsync(data);
+                await DepartureBoard.UpdateAsync(data, cts.Token);
 
                 lastFetch = DateTime.Now;
             }
@@ -143,6 +151,8 @@ namespace Commuter.Models
 
         public void Dispose()
         {
+            cts?.Dispose();
+            cts = null;
             disposable?.Dispose();
             departureBoardPeriodicUpdater.Stop();
             IsRefreshing = false;

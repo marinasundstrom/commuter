@@ -9,7 +9,7 @@ namespace Commuter.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is Models.Departure dep)
+            if (value is Models.DepartureViewModel dep)
             {
                 switch (dep.LineType)
                 {

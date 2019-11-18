@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Commuter.Data
 {
-    internal struct StopAreaInternal : IStopArea
+    public struct StopAreaInternal : IStopArea
     {
         public int StopAreaId { get; set; }
         public IEnumerable<StopPoint> StopPoints { get; set; }

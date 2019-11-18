@@ -46,7 +46,7 @@ namespace Commuter.Tests
                                  Name = "42 Foobar",
                                   Towards = "Boo",
                                    DepartureTime = DateTime.Now,
-                                    Line = 42,
+                                    No = 42,
                                      LineType = "Bus"
                             }
                         }
@@ -55,7 +55,7 @@ namespace Commuter.Tests
 
             var geoLocationServiceMock = new Mock<IGeoLocationService>();
             geoLocationServiceMock.Setup(x => x.GetLocationAsync())
-                .ReturnsAsync(new Xamarin.Essentials.Location(343, 878));
+                .ReturnsAsync(new Location(343, 878));
 
             var loggerMock = new Mock<ILogger<DataFetcher>>();
 
