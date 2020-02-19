@@ -4,13 +4,14 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:Commuter.Controls"
+    xmlns:converters="clr-namespace:Commuter.Converters"
     xmlns:d="http://xamarin.com/schemas/2014/forms/design"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="clr-namespace:Commuter.Converters"
+    BackgroundColor="White"
     mc:Ignorable="d">
 
     <ContentPage.Resources>
-        <converters:DataSourceConverter x:Key="DataSourceConverter"></converters:DataSourceConverter>
+        <converters:DataSourceConverter x:Key="DataSourceConverter" />
     </ContentPage.Resources>
 
     <Grid>
@@ -18,7 +19,11 @@
             IsRefreshing="{Binding IsRefreshing}"
             ItemsSource="{Binding DepartureBoard}"
             RefreshCommand="{Binding RefreshCommand}" />
-        <Label IsVisible="{Binding DepartureBoard.Count, Converter={StaticResource DataSourceConverter}}" HorizontalOptions="Center" VerticalOptions="Center" Text="No stops nearby"></Label>
+        <Label
+            HorizontalOptions="Center"
+            IsVisible="{Binding DepartureBoard.Count, Converter={StaticResource DataSourceConverter}}"
+            Text="No stops nearby"
+            VerticalOptions="Center" />
     </Grid>
 
 </ContentPage>
