@@ -2,7 +2,7 @@
 
 Mobile app for daily commuters in Skåne region, Sweden. 
 
-For iOS and Android.
+For iOS and Android. Screenshots below.
 
 ## Main User Story
 
